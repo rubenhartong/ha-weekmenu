@@ -1,0 +1,47 @@
+import_plan:
+  name: Weekvoorstel importeren
+  description: Vervangt het weekvoorstel (recepten, producten, eventueel keuze voor Michelle). Wordt door Claude op vrijdag aangeroepen.
+  fields:
+    plan:
+      name: Plan
+      description: Object met week, delivery, order_deadline, advice, recipes[], items[], michelle.
+      required: true
+      selector:
+        object:
+    standard_items:
+      name: Standaardlijst
+      description: Optioneel; vervangt de vaste lijst.
+      selector:
+        object:
+get_context:
+  name: Context ophalen
+  description: Geeft alle Weekmenu-gegevens terug (voorkeuren, standaardlijst, feedback, huidig plan).
+approve:
+  name: Akkoord en mandje vullen
+  description: Zet alle producten die niet zijn weggehaald in het Picnic-mandje.
+add_text:
+  name: Producten toevoegen
+  description: Voegt producten toe aan deze week, bijv. "hagelslag, 2x komkommer".
+  fields:
+    text:
+      name: Tekst
+      required: true
+      selector:
+        text:
+michelle_choose:
+  name: Keuze Michelle
+  description: Kiest Michelles meeneem-optie voor haar late dienst.
+  fields:
+    option_id:
+      name: Optie
+      selector:
+        text:
+set_preferences:
+  name: Voorkeuren
+  description: Werkt voorkeuren bij (worden samengevoegd).
+  fields:
+    preferences:
+      name: Voorkeuren
+      required: true
+      selector:
+        object:

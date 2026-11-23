@@ -1,0 +1,13 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Weekmenu",
+        "description": "Voegt het Weekmenu-paneel toe aan de zijbalk: boodschappen, recepten en kookmodus."
+      }
+    },
+    "abort": {
+      "already_configured": "Weekmenu is al toegevoegd."
+    }
+  }
+}
