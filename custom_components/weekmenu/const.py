@@ -1,7 +1,7 @@
 """Constants for Weekmenu."""
 
 DOMAIN = "weekmenu"
-VERSION = "0.2.0"
+VERSION = "0.3.0"
 STORAGE_KEY = "weekmenu"
 STORAGE_VERSION = 1
 

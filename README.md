@@ -82,3 +82,7 @@ Gegevens staan in `.storage/weekmenu` en gaan mee in de HA-backups.
 Beantwoorden met `weekmenu.answer` (`question_id` + `option_id`, of `text` om zelf iets te typen).
 Elke keuze en elk getypt product wordt onthouden in `preferences.learned[<question_id>]` (met aantal en datum), zodat het voorstel ze de volgende keer als eerste aanbiedt.
 Event: `weekmenu_answer` (`question_id`, `who`, `option_id`, `title`).
+
+## Bijna op (huishoudspullen)
+
+Items met `source: advice` zijn tips ("misschien bijna op") met een reden in `note`. Wegvegen, zelf toevoegen en kopen wordt gelogd in `preferences.restock_log` (`skipped` / `added` / `bought` met datum); het vrijdagvoorstel gebruikt dat samen met de Picnic-geschiedenis om het ritme per product bij te stellen.

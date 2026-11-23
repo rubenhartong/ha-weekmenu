@@ -15,7 +15,7 @@ const GROUPS = [
   ["snack", "Snacks"],
   ["standard", "Vaste boodschappen"],
   ["promo", "Aanbiedingen"],
-  ["advice", "Tip van Claude"],
+  ["advice", "Misschien bijna op"],
   ["extra", "Extra toegevoegd"],
 ];
 
@@ -412,7 +412,7 @@ class WeekmenuPanel extends HTMLElement {
 
   _row(i, locked) {
     const promo = i.promo?.label ? `<span class="promo">🏷️ ${esc(i.promo.label)}</span>` : "";
-    const sub = [promo, i.recipe ? esc(i.recipe) : "", i.unit ? esc(i.unit) : ""].filter(Boolean).join(" · ");
+    const sub = [promo, i.recipe ? esc(i.recipe) : "", i.note ? `💡 ${esc(i.note)}` : "", i.unit ? esc(i.unit) : ""].filter(Boolean).join(" · ");
     return `<div class="rowwrap"><div class="item" data-key="${esc(i.key)}">
       ${this._thumb(i)}
       <div class="info"><div class="n">${esc(i.name)}</div>${sub ? `<div class="s">${sub}</div>` : ""}</div>
@@ -606,7 +606,7 @@ class WeekmenuPanel extends HTMLElement {
       case "remove": {
         const it = this._find(v); if (!it) return;
         it.removed = true;
-        this._toast(`${it.name} weggehaald`, { type: "weekmenu/item_removed", key: v, removed: false });
+        this._toast(it.source === "advice" ? `Oké, nog genoeg ${it.name.toLowerCase()}. Ik vraag het later weer.` : `${it.name} weggehaald`, { type: "weekmenu/item_removed", key: v, removed: false });
         return this._ws({ type: "weekmenu/item_removed", key: v, removed: true });
       }
       case "restore": return this._ws({ type: "weekmenu/item_removed", key: v, removed: false });

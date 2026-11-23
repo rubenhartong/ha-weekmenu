@@ -251,6 +251,8 @@ class WeekmenuManager:
     @callback
     def set_qty(self, key: str, qty: int) -> None:
         item = self._find(key)
+        if int(qty) <= 0 and not item["removed"] and item.get("source") == "advice":
+            self.restock(item, "skipped")
         item["qty"] = max(0, int(qty))
         item["removed"] = item["qty"] == 0
         self.changed()
@@ -258,6 +260,8 @@ class WeekmenuManager:
     @callback
     def set_removed(self, key: str, removed: bool) -> None:
         item = self._find(key)
+        if removed and not item["removed"] and item.get("source") == "advice":
+            self.restock(item, "skipped")
         item["removed"] = removed
         if not removed and item["qty"] == 0:
             item["qty"] = 1
@@ -267,6 +271,7 @@ class WeekmenuManager:
     def add_items(self, raw_items: list[dict[str, Any]]) -> None:
         plan = self._plan()
         for new in _norm_items(raw_items, "extra"):
+            self.restock(new, "added")
             existing = next((i for i in plan["items"] if i["key"] == new["key"]), None)
             if existing:
                 existing["qty"] = (existing["qty"] if not existing["removed"] else 0) + new["qty"]
@@ -303,6 +308,20 @@ class WeekmenuManager:
                 "reminder": (opt.get("reminder") or opt.get("title", "").lower()) if opt else "",
             },
         )
+
+    # ---- restock log (household items: what was skipped / added / bought) ----
+    @callback
+    def restock(self, item: dict[str, Any], action: str) -> None:
+        log = self.data.setdefault("preferences", {}).setdefault("restock_log", [])
+        log.append(
+            {
+                "name": item.get("name"),
+                "picnic_id": item.get("picnic_id"),
+                "action": action,  # skipped | added | bought
+                "date": dt_util.now().date().isoformat(),
+            }
+        )
+        self.data["preferences"]["restock_log"] = log[-300:]
 
     # ---- weekly questions (snacks etc.) + learning -------------------------
     @callback
@@ -446,6 +465,9 @@ class WeekmenuManager:
             except Exception as err:  # noqa: BLE001
                 _LOGGER.warning("Picnic add_product mislukt voor %s: %s", item["name"], err)
                 results.append({"key": item["key"], "ok": False, "error": str(err)})
+        for item, res in zip(todo, results):
+            if res["ok"] and item.get("source") in ("advice", "extra"):
+                self.restock(item, "bought")
         ok = sum(1 for r in results if r["ok"])
         plan["status"] = "approved"
         plan["approved_at"] = dt_util.utcnow().isoformat()
