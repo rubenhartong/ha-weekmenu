@@ -85,6 +85,7 @@ def _norm_item(raw: dict[str, Any], default_source: str = "extra") -> dict[str, 
         "source": raw.get("source") or default_source,
         "recipe": raw.get("recipe"),
         "note": raw.get("note"),
+        "question": raw.get("question"),
         "removed": bool(raw.get("removed", False)),
     }
     item["key"] = raw.get("key") or _item_key(item)
@@ -186,6 +187,17 @@ class WeekmenuManager:
             for j, opt in enumerate(michelle.get("options") or []):
                 opt.setdefault("id", f"m{j + 1}")
                 opt["items"] = _norm_items(opt.get("items") or [], "michelle")
+        questions = []
+        for k, q in enumerate(plan.get("questions") or []):
+            q = dict(q)
+            q.setdefault("id", f"q{k + 1}")
+            q.setdefault("title", q["id"])
+            q["choice"] = None
+            q["custom"] = None
+            for j, opt in enumerate(q.get("options") or []):
+                opt.setdefault("id", f"o{j + 1}")
+                opt["items"] = _norm_items(opt.get("items") or [], "snack")
+            questions.append(q)
         self.data["plan"] = {
             "week": plan.get("week"),
             "delivery": plan.get("delivery"),
@@ -196,6 +208,7 @@ class WeekmenuManager:
             "recipes": recipes,
             "items": _norm_items(plan.get("items") or [], "standard"),
             "michelle": michelle,
+            "questions": questions,
             "approved_at": None,
             "results": [],
         }
@@ -219,6 +232,19 @@ class WeekmenuManager:
                     if michelle
                     else None
                 ),
+                "questions": [
+                    {
+                        "id": q["id"],
+                        "who": q.get("who"),
+                        "title": q.get("title"),
+                        "question": q.get("question"),
+                        "options": [
+                            {"id": o["id"], "title": o.get("title"), "emoji": o.get("emoji")}
+                            for o in q.get("options") or []
+                        ],
+                    }
+                    for q in questions
+                ],
             },
         )
 
@@ -266,6 +292,7 @@ class WeekmenuManager:
         if opt:
             for it in opt["items"]:
                 plan["items"].append({**copy.deepcopy(it), "source": "michelle"})
+            self.learn("michelle_dinsdag", opt.get("title", ""), opt["items"])
         self.changed()
         self.hass.bus.async_fire(
             f"{DOMAIN}_michelle_choice",
@@ -275,6 +302,78 @@ class WeekmenuManager:
                 # short text for the morning reminder, e.g. "maaltijdsalade"
                 "reminder": (opt.get("reminder") or opt.get("title", "").lower()) if opt else "",
             },
+        )
+
+    # ---- weekly questions (snacks etc.) + learning -------------------------
+    @callback
+    def learn(self, key: str, title: str, items: list | None = None) -> None:
+        """Remember what was picked/typed so Claude offers it first next time."""
+        if not title:
+            return
+        learned = self.data.setdefault("preferences", {}).setdefault("learned", {})
+        entries = learned.setdefault(key, [])
+        entry = next((e for e in entries if e["title"].lower() == title.lower()), None)
+        if entry is None:
+            entry = {"title": title, "count": 0}
+            entries.append(entry)
+        entry["count"] += 1
+        entry["last"] = dt_util.now().date().isoformat()
+        if items:
+            entry["items"] = [
+                {k: i.get(k) for k in ("name", "picnic_id", "image_id", "unit_price") if i.get(k)}
+                for i in items
+            ]
+        entries.sort(key=lambda e: (e["count"], e.get("last", "")), reverse=True)
+        learned[key] = entries[:12]
+
+    def _question(self, qid: str) -> dict[str, Any]:
+        q = next((q for q in self._plan().get("questions") or [] if q["id"] == qid), None)
+        if q is None:
+            raise HomeAssistantError(f"Onbekende vraag: {qid}")
+        return q
+
+    def _clear_answer(self, qid: str) -> None:
+        plan = self._plan()
+        plan["items"] = [i for i in plan["items"] if i.get("question") != qid]
+
+    @callback
+    def answer(self, qid: str, option_id: str | None) -> None:
+        q = self._question(qid)
+        self._clear_answer(qid)
+        q["custom"] = None
+        q["choice"] = option_id
+        opt = None
+        if option_id:
+            opt = next((o for o in q.get("options") or [] if o["id"] == option_id), None)
+            if opt is None:
+                raise HomeAssistantError(f"Onbekende optie: {option_id}")
+            for it in opt["items"]:
+                self._plan()["items"].append(
+                    {**copy.deepcopy(it), "source": "snack", "question": qid, "recipe": q.get("title")}
+                )
+            self.learn(qid, opt.get("title", ""), opt["items"])
+        self.changed()
+        self.hass.bus.async_fire(
+            f"{DOMAIN}_answer",
+            {"question_id": qid, "who": q.get("who"), "option_id": option_id, "title": opt.get("title") if opt else None},
+        )
+
+    @callback
+    def answer_text(self, qid: str, text: str) -> None:
+        q = self._question(qid)
+        text = (text or "").strip()
+        if not text:
+            return self.answer(qid, None)
+        self._clear_answer(qid)
+        q["choice"] = "custom"
+        q["custom"] = text
+        for it in _norm_items(_parse_text_items(text), "snack"):
+            self._plan()["items"].append({**it, "source": "snack", "question": qid, "recipe": q.get("title")})
+        self.learn(qid, text)
+        self.changed()
+        self.hass.bus.async_fire(
+            f"{DOMAIN}_answer",
+            {"question_id": qid, "who": q.get("who"), "option_id": "custom", "title": text},
         )
 
     # ---- standard list ---------------------------------------------------
@@ -447,6 +546,22 @@ def ws_michelle_choose(hass, connection, msg):
 
 
 @websocket_api.websocket_command(
+    {vol.Required("type"): "weekmenu/answer", vol.Required("question_id"): str, vol.Optional("option_id"): vol.Any(str, None)}
+)
+@callback
+def ws_answer(hass, connection, msg):
+    _run(connection, msg, lambda: _mgr(hass).answer(msg["question_id"], msg.get("option_id")))
+
+
+@websocket_api.websocket_command(
+    {vol.Required("type"): "weekmenu/answer_text", vol.Required("question_id"): str, vol.Required("text"): str}
+)
+@callback
+def ws_answer_text(hass, connection, msg):
+    _run(connection, msg, lambda: _mgr(hass).answer_text(msg["question_id"], msg["text"]))
+
+
+@websocket_api.websocket_command(
     {
         vol.Required("type"): "weekmenu/feedback",
         vol.Required("recipe_id"): str,
@@ -489,6 +604,8 @@ WS_COMMANDS = (
     ws_standard_add,
     ws_standard_qty,
     ws_michelle_choose,
+    ws_answer,
+    ws_answer_text,
     ws_feedback,
     ws_approve,
     ws_reopen,
@@ -522,6 +639,12 @@ def _register_services(hass: HomeAssistant) -> None:
     async def michelle_choose(call: ServiceCall) -> None:
         _mgr(hass).michelle_choose(call.data.get("option_id"))
 
+    async def answer(call: ServiceCall) -> None:
+        if call.data.get("text"):
+            _mgr(hass).answer_text(call.data["question_id"], call.data["text"])
+        else:
+            _mgr(hass).answer(call.data["question_id"], call.data.get("option_id"))
+
     async def set_preferences(call: ServiceCall) -> None:
         mgr = _mgr(hass)
         mgr.data["preferences"] = {**mgr.data.get("preferences", {}), **call.data["preferences"]}
@@ -542,6 +665,18 @@ def _register_services(hass: HomeAssistant) -> None:
         "michelle_choose",
         michelle_choose,
         schema=vol.Schema({vol.Optional("option_id"): vol.Any(cv.string, None)}),
+    )
+    hass.services.async_register(
+        DOMAIN,
+        "answer",
+        answer,
+        schema=vol.Schema(
+            {
+                vol.Required("question_id"): cv.string,
+                vol.Optional("option_id"): vol.Any(cv.string, None),
+                vol.Optional("text"): cv.string,
+            }
+        ),
     )
     hass.services.async_register(
         DOMAIN,

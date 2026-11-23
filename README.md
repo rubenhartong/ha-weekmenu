@@ -75,3 +75,10 @@ Gegevens staan in `.storage/weekmenu` en gaan mee in de HA-backups.
 - `weekmenu_plan_imported` — `week`, `recipes`, `michelle` (of `null`): voor de vraag aan Michelle.
 - `weekmenu_michelle_choice` — `option_id`, `title`, `reminder` (bijv. "maaltijdsalade").
 - `weekmenu_approved` — `added`, `failed`, `total`.
+
+## Weekvragen (snacks)
+
+`plan.questions`: lijst van `{id, who: kai|michelle|ruben, title, question, options: [{id, emoji, title, price, items[]}]}`.
+Beantwoorden met `weekmenu.answer` (`question_id` + `option_id`, of `text` om zelf iets te typen).
+Elke keuze en elk getypt product wordt onthouden in `preferences.learned[<question_id>]` (met aantal en datum), zodat het voorstel ze de volgende keer als eerste aanbiedt.
+Event: `weekmenu_answer` (`question_id`, `who`, `option_id`, `title`).

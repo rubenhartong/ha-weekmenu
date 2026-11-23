@@ -45,3 +45,20 @@ set_preferences:
       required: true
       selector:
         object:
+answer:
+  name: Vraag beantwoorden
+  description: Beantwoordt een weekvraag (bijv. snack voor Kai). Kies een optie of typ zelf iets; wat gekozen wordt, wordt onthouden.
+  fields:
+    question_id:
+      name: Vraag
+      required: true
+      selector:
+        text:
+    option_id:
+      name: Optie
+      selector:
+        text:
+    text:
+      name: Zelf getypt
+      selector:
+        text:

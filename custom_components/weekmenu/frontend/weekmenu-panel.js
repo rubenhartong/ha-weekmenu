@@ -12,6 +12,7 @@ const eur = (n) =>
 const GROUPS = [
   ["recipe", "Voor je recepten"],
   ["michelle", "Voor Michelle"],
+  ["snack", "Snacks"],
   ["standard", "Vaste boodschappen"],
   ["promo", "Aanbiedingen"],
   ["advice", "Tip van Claude"],
@@ -73,6 +74,18 @@ h2 { font-size: 17px; margin: 24px 4px 10px; font-weight: 650; }
 .opt.on { background: var(--acc-soft); outline: 2px solid var(--acc); }
 .opt .e { font-size: 28px; }
 .opt .n { flex:1; font-weight: 600; }
+.q { padding: 12px 0; border-top: 1px solid var(--line); }
+.q:first-child { border-top: 0; padding-top: 0; }
+.q .qt { font-weight: 650; margin-bottom: 8px; display:flex; gap: 8px; align-items: baseline; }
+.q .qt span { font-weight: 500; color: var(--tx2); font-size: 13px; }
+.chips { display:flex; flex-wrap: wrap; gap: 8px; }
+.chip { padding: 9px 13px; border-radius: 99px; background: var(--bg); font-weight: 600; font-size: 14px; }
+.chip.on { background: var(--acc); color: #fff; }
+.chip .new { font-size: 11px; opacity: .75; margin-left: 4px; }
+.own { display:flex; gap: 8px; margin-top: 8px; }
+.own input { flex:1; min-width:0; font: inherit; font-size: 16px; padding: 9px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); color: var(--tx); outline: none; }
+.own input:focus { border-color: var(--acc); }
+.own button { padding: 0 14px; border-radius: 12px; background: var(--acc-soft); color: var(--acc); font-weight: 650; }
 /* list */
 .seg { display:flex; background: var(--card); border-radius: 12px; padding: 3px; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,.05); }
 .seg button { flex:1; padding: 9px; border-radius: 10px; font-weight: 600; color: var(--tx2); }
@@ -306,6 +319,7 @@ class WeekmenuPanel extends HTMLElement {
                  ${p.order_deadline ? `<div class="muted small">Bestellen kan tot ${esc(p.order_deadline)}</div>` : ""}`}
           </div>
           ${this._michelleCard()}
+          ${this._questionsCard()}
         </div>
         <div>
           <h2>Recepten deze week</h2>
@@ -339,6 +353,21 @@ class WeekmenuPanel extends HTMLElement {
         </div>
         ${m.choice ? "" : `<div class="muted small" style="margin-top:8px">Wacht op Michelle</div>`}
       </div>`;
+  }
+
+  _questionsCard() {
+    const qs = this.plan?.questions || [];
+    if (!qs.length) return "";
+    const who = { kai: "👦", michelle: "👩", ruben: "🧔" };
+    return `<h2>Snacks deze week</h2><div class="card">${qs.map((q) => `
+      <div class="q">
+        <div class="qt">${who[q.who] || "🍎"} ${esc(q.title)}${q.question ? `<span>${esc(q.question)}</span>` : ""}</div>
+        <div class="chips">${(q.options || []).map((o) => `
+          <button class="chip ${q.choice === o.id ? "on" : ""}" data-a="answer" data-q="${esc(q.id)}" data-v="${esc(o.id)}">${esc(o.emoji || "")} ${esc(o.title)}${o.learned ? "" : o.new ? `<span class="new">nieuw</span>` : ""}</button>`).join("")}
+          ${q.choice === "custom" ? `<button class="chip on" data-a="answer" data-q="${esc(q.id)}" data-v="">✍️ ${esc(q.custom)}</button>` : ""}
+        </div>
+        <div class="own"><input id="own-${esc(q.id)}" placeholder="Zelf zoeken, bijv. rijstwafels" enterkeyhint="done" autocomplete="off"><button data-a="own" data-q="${esc(q.id)}">Kies</button></div>
+      </div>`).join("")}</div>`;
   }
 
   _approveBtn() {
@@ -518,6 +547,8 @@ class WeekmenuPanel extends HTMLElement {
       const inp = root.getElementById(id);
       inp?.addEventListener("keydown", (e) => { if (e.key === "Enter") this._act(id); });
     });
+    root.querySelectorAll('input[id^="own-"]').forEach((inp) =>
+      inp.addEventListener("keydown", (e) => { if (e.key === "Enter") this._act("own", null, { dataset: { q: inp.id.slice(4) } }); }));
     // swipe left to remove
     root.querySelectorAll(".item[data-key], .item[data-std]").forEach((el) => this._swipe(el));
     // swipe through cooking steps
@@ -621,6 +652,21 @@ class WeekmenuPanel extends HTMLElement {
       case "mchoose": {
         const m = this.plan?.michelle;
         return this._ws({ type: "weekmenu/michelle_choose", option_id: m?.choice === v ? null : v });
+      }
+      case "answer": {
+        const qid = el?.dataset.q;
+        const q = (this.plan?.questions || []).find((x) => x.id === qid);
+        const opt = v && q?.choice !== v ? v : null;
+        return this._ws({ type: "weekmenu/answer", question_id: qid, option_id: opt });
+      }
+      case "own": {
+        const qid = el?.dataset.q;
+        const inp = this.shadowRoot.getElementById(`own-${qid}`);
+        const text = inp?.value.trim(); if (!text) return;
+        inp.value = "";
+        await this._ws({ type: "weekmenu/answer_text", question_id: qid, text });
+        this._toast("Genoteerd, die bied ik volgende keer ook aan");
+        return;
       }
       case "cook": ui.cook = v; ui.step = -1; ui.checked = {}; this._wakeLock(); break;
       case "close": ui.cook = null; this._releaseWake(); break;
