@@ -206,6 +206,28 @@ class WeekmenuPanel extends HTMLElement {
       { type: "weekmenu/subscribe" }
     );
     this._unsub.catch((e) => { this._error = e.message || String(e); this._render(); });
+    this._ensureSidebar();
+  }
+
+  // Eenmalig per gebruiker: Weekmenu als 2e item in de zijbalk (na het hoofddashboard).
+  async _ensureSidebar() {
+    const ws = (m) => this._hass.connection.sendMessagePromise(m);
+    try {
+      const flag = await ws({ type: "frontend/get_user_data", key: "weekmenu_sidebar" });
+      if (flag?.value?.done) return;
+      const cur = (await ws({ type: "frontend/get_user_data", key: "sidebar" }))?.value || {};
+      let def = "lovelace";
+      try { def = (await ws({ type: "frontend/get_system_data", key: "core" }))?.value?.default_panel || def; } catch (_) {}
+      const rest = (cur.panelOrder || []).filter((p) => p !== "weekmenu" && p !== def);
+      await ws({
+        type: "frontend/set_user_data",
+        key: "sidebar",
+        value: { ...cur, panelOrder: [def, "weekmenu", ...rest], hiddenPanels: (cur.hiddenPanels || []).filter((p) => p !== "weekmenu") },
+      });
+      await ws({ type: "frontend/set_user_data", key: "weekmenu_sidebar", value: { done: true } });
+    } catch (e) {
+      console.warn("Weekmenu: zijbalk niet aangepast", e);
+    }
   }
 
   async _ws(msg) {
