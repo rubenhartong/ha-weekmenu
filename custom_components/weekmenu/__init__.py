@@ -202,6 +202,25 @@ class WeekmenuManager:
         if standard_items is not None:
             self.data["standard_items"] = _norm_items(standard_items, "standard")
         self.changed()
+        self.hass.bus.async_fire(
+            f"{DOMAIN}_plan_imported",
+            {
+                "week": plan.get("week"),
+                "recipes": [r.get("title") for r in recipes],
+                "michelle": (
+                    {
+                        "day_label": michelle.get("day_label"),
+                        "question": michelle.get("question"),
+                        "options": [
+                            {"id": o["id"], "title": o.get("title"), "emoji": o.get("emoji")}
+                            for o in michelle.get("options") or []
+                        ],
+                    }
+                    if michelle
+                    else None
+                ),
+            },
+        )
 
     @callback
     def set_qty(self, key: str, qty: int) -> None:
@@ -238,14 +257,25 @@ class WeekmenuManager:
             raise HomeAssistantError("Er is deze week geen keuze voor Michelle.")
         # remove previous choice's items
         plan["items"] = [i for i in plan["items"] if i.get("source") != "michelle"]
-        m["choice"] = option_id
+        opt = None
         if option_id:
             opt = next((o for o in m.get("options") or [] if o["id"] == option_id), None)
             if opt is None:
                 raise HomeAssistantError(f"Onbekende optie: {option_id}")
+        m["choice"] = option_id
+        if opt:
             for it in opt["items"]:
                 plan["items"].append({**copy.deepcopy(it), "source": "michelle"})
         self.changed()
+        self.hass.bus.async_fire(
+            f"{DOMAIN}_michelle_choice",
+            {
+                "option_id": option_id,
+                "title": opt.get("title") if opt else None,
+                # short text for the morning reminder, e.g. "maaltijdsalade"
+                "reminder": (opt.get("reminder") or opt.get("title", "").lower()) if opt else "",
+            },
+        )
 
     # ---- standard list ---------------------------------------------------
     @callback

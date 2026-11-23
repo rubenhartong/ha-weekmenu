@@ -69,3 +69,9 @@ plan:
 ```
 
 Gegevens staan in `.storage/weekmenu` en gaan mee in de HA-backups.
+
+## Events
+
+- `weekmenu_plan_imported` — `week`, `recipes`, `michelle` (of `null`): voor de vraag aan Michelle.
+- `weekmenu_michelle_choice` — `option_id`, `title`, `reminder` (bijv. "maaltijdsalade").
+- `weekmenu_approved` — `added`, `failed`, `total`.
