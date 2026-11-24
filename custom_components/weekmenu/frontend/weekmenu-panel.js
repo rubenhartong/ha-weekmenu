@@ -166,52 +166,76 @@ h2 { font-size: 17px; margin: 24px 4px 10px; font-weight: 650; }
 .toast { position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%); background: #1d2320; color: #fff; border-radius: 14px; padding: 12px 16px; display:flex; gap: 16px; align-items:center; z-index: 30; box-shadow: 0 8px 24px rgba(0,0,0,.25); font-weight: 500; }
 .toast button { color: #7fd6a1; font-weight: 700; }
 /* days */
-.dsum { font-size: 15px; font-weight: 650; margin: 0 4px 10px; display:flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
-.dsum .muted { font-weight: 500; }
+.wkhead { display:flex; align-items:flex-end; justify-content:space-between; gap: 12px; margin: 4px 4px 10px; }
+.wkhead h2 { margin: 0; font-size: 20px; letter-spacing: -.01em; }
+.wkhead .meta { font-size: 13px; color: var(--tx2); text-align: right; line-height: 1.35; }
+.wkhead .meta b { color: var(--tx); font-weight: 650; }
+.prog { display:flex; gap: 4px; margin: 0 4px 14px; }
+.prog i { flex:1; height: 4px; border-radius: 99px; background: var(--line); }
+.prog i.on { background: var(--acc); }
+.prog i.none { background: var(--tx2); opacity: .45; }
 .days { background: var(--card); border-radius: var(--r); overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,.05), 0 4px 16px rgba(0,0,0,.04); }
-.day { border-bottom: 1px solid var(--line); }
-.day:last-child { border-bottom: 0; }
-.day.past .dhead { opacity: .5; }
-.dhead { width: 100%; display:flex; align-items:center; gap: 12px; padding: 13px 14px; text-align:left; }
-.day.today .dhead { background: var(--acc-soft); }
-.dn { width: 86px; flex: 0 0 86px; line-height: 1.2; }
-.dn b { display:block; font-size: 15px; }
-.dn span { font-size: 12.5px; color: var(--tx2); }
-.day.today .dn span { color: var(--acc); font-weight: 650; }
-.dc { flex:1; min-width:0; display:flex; align-items:center; gap: 10px; }
-.dc .e { font-size: 26px; flex: 0 0 auto; }
-.dc .tt { flex:1; min-width:0; font-weight: 600; font-size: 15px; line-height: 1.25; overflow:hidden; text-overflow: ellipsis; display:-webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-.dc .pr { color: var(--tx2); font-size: 13px; white-space: nowrap; }
-.dc.open { color: var(--warn); font-weight: 600; }
-.dc.none { color: var(--tx2); }
-.chev { color: var(--tx2); font-size: 20px; transition: transform .2s; }
+.day { border-top: 1px solid var(--line); }
+.day:first-child { border-top: 0; }
+.dhead { width: 100%; display:flex; align-items:center; gap: 14px; padding: 12px 14px; text-align:left; min-height: 68px; }
+.day.past .dhead { opacity: .45; }
+.dtile { width: 46px; flex: 0 0 46px; height: 50px; border-radius: 12px; background: var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; line-height: 1; }
+.dtile small { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--tx2); }
+.dtile b { font-size: 19px; font-weight: 700; margin-top: 3px; font-variant-numeric: tabular-nums; }
+.day.today .dtile { background: var(--acc); color: #fff; }
+.day.today .dtile small { color: rgba(255,255,255,.85); }
+.dmid { flex:1; min-width:0; display:grid; gap: 2px; }
+.dslot { font-size: 11.5px; font-weight: 650; letter-spacing: .05em; text-transform: uppercase; color: var(--tx2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dmain { display:flex; align-items:center; gap: 8px; min-width: 0; font-size: 15.5px; font-weight: 600; }
+.dmain .tt { min-width:0; overflow:hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dmain.open { color: var(--tx2); font-weight: 500; }
+.dmain.open::before { content: ""; width: 7px; height: 7px; border-radius: 99px; background: var(--warn); flex: 0 0 7px; }
+.dmain.none { color: var(--tx2); font-weight: 500; }
+.dnote { font-size: 12.5px; color: var(--tx2); line-height: 1.35; }
+.dright { display:flex; align-items:center; gap: 6px; color: var(--tx2); font-size: 14px; font-variant-numeric: tabular-nums; }
+.chev { width: 18px; height: 18px; transition: transform .2s; opacity: .6; }
 .day.open .chev { transform: rotate(90deg); }
-.dmid { flex:1; min-width:0; display:grid; gap: 3px; }
-.dnote { font-size: 12.5px; color: var(--tx2); font-weight: 500; }
-.strip { display:flex; align-items: flex-start; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 6px 14px 10px; scrollbar-width: none; scroll-padding: 0 14px; }
+.strip { display:flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 2px 14px 12px; scrollbar-width: none; scroll-padding: 0 14px; }
 .strip::-webkit-scrollbar { display:none; }
-.ocard { scroll-snap-align: start; flex: 0 0 min(84%, 330px); border-radius: 16px; background: var(--bg); border: 2px solid transparent; display:flex; flex-direction:column; overflow:hidden; }
-.ocard.on { border-color: var(--acc); background: var(--card); box-shadow: 0 0 0 3px var(--acc-soft); }
-.ocard .hero { height: 86px; display:flex; align-items:center; justify-content:center; font-size: 52px; background: linear-gradient(135deg, #fdf3e3, #e8f5ec); }
-.ocard.nocook .hero { background: linear-gradient(135deg, #eef0f3, #f6f1ea); }
-.ocard .body { padding: 12px 14px 14px; display:grid; gap: 8px; flex:1; align-content: start; }
-.ocard .t { font-weight: 650; font-size: 16px; line-height: 1.25; display:flex; gap: 8px; }
-.ocard .t span:first-child { flex:1; }
-.ocard .t .pr { font-weight: 600; color: var(--tx2); white-space: nowrap; }
-.ocard .ings { margin: 0; padding: 0; list-style: none; font-size: 13.5px; display:grid; gap: 3px; }
-.ocard .ings li::before { content: "• "; color: var(--tx2); }
-.ocard .ings .promo { color: var(--acc); font-weight: 600; }
-.ocard .prep { font-size: 13.5px; display:grid; gap: 6px; }
-.ocard .prep ol { margin: 0; padding-left: 20px; display:grid; gap: 4px; }
-.ocard .linkbtn { color: var(--acc); font-weight: 650; font-size: 14px; text-align:left; }
-.ocard .choose { margin-top: auto; }
-.ocard .choose .btn { width: 100%; min-height: 44px; padding: 10px 14px; }
-.ocard.on .choose .btn { background: var(--acc-soft); color: var(--acc); }
-.sdots { display:flex; gap: 6px; justify-content:center; padding: 0 0 12px; }
-.sdots i { width: 7px; height: 7px; border-radius: 99px; background: var(--line); transition: width .2s; }
-.sdots i.on { background: var(--acc); width: 18px; }
-.sdots i.ch { background: var(--acc); opacity: .45; }
+.ocard { scroll-snap-align: start; flex: 0 0 min(86%, 340px); border-radius: 16px; background: var(--bg); border: 1.5px solid var(--line); display:flex; flex-direction:column; padding: 14px; gap: 12px; position: relative; }
+.ocard.on { border-color: var(--acc); box-shadow: 0 0 0 1px var(--acc) inset; }
+.ocard .badge { position:absolute; top: 12px; right: 12px; background: var(--acc); color:#fff; font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 99px; }
+.ohead { display:flex; gap: 12px; align-items:flex-start; padding-right: 0; }
+.oemoji { width: 48px; height: 48px; flex: 0 0 48px; border-radius: 12px; background: var(--card); display:flex; align-items:center; justify-content:center; font-size: 26px; }
+.otitle { font-weight: 650; font-size: 15.5px; line-height: 1.3; }
+.ometa { font-size: 13px; color: var(--tx2); margin-top: 3px; display:flex; gap: 6px; flex-wrap: wrap; align-items:center; }
+.ometa .dot::before { content: "·"; margin-right: 6px; }
+.otag { display:inline-block; font-size: 12px; font-weight: 650; color: var(--acc); background: var(--acc-soft); padding: 2px 8px; border-radius: 6px; }
+.ings { margin: 0; padding: 0; list-style: none; font-size: 13.5px; display:grid; gap: 5px; }
+.ings li { display:flex; gap: 8px; align-items: baseline; min-width: 0; }
+.ings .q { color: var(--tx2); font-variant-numeric: tabular-nums; }
+.ings .n { flex:1; min-width:0; overflow:hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ings .p { font-size: 11.5px; font-weight: 650; color: var(--acc); white-space: nowrap; }
+.ings .more { color: var(--tx2); }
+.prep { font-size: 13.5px; display:grid; gap: 8px; border-top: 1px solid var(--line); padding-top: 10px; }
+.prep ol { margin: 0; padding-left: 18px; display:grid; gap: 5px; line-height: 1.4; }
+.prep .tip { background: var(--acc-soft); border-radius: 10px; padding: 8px 10px; }
+.ofoot { display:grid; gap: 4px; margin-top: auto; }
+.ofoot .linkbtn { justify-self: start; color: var(--acc); font-weight: 600; font-size: 13.5px; padding: 4px 0 8px; }
+.ofoot .btn { width: 100%; min-height: 44px; padding: 10px 14px; font-size: 15px; border-radius: 12px; }
+.ocard.on .ofoot .btn { background: transparent; color: var(--acc); border: 1.5px solid var(--acc); }
+.ocard.nocook .oemoji { opacity: .8; }
+.sdots { display:flex; gap: 5px; justify-content:center; padding: 0 0 14px; }
+.sdots i { width: 6px; height: 6px; border-radius: 99px; background: var(--line); transition: width .2s, background .2s; }
+.sdots i.on { background: var(--tx2); width: 16px; }
+.sdots i.ch { background: var(--acc); }
+.sdots i.ch.on { background: var(--acc); }
 .warnline { color: var(--warn); font-weight: 600; font-size: 13.5px; }
+.sheetbg { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 15; }
+.sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 16; max-height: 86vh; overflow-y: auto; background: var(--card); border-radius: 20px 20px 0 0; padding: 10px 18px max(18px, env(safe-area-inset-bottom)); box-shadow: 0 -8px 30px rgba(0,0,0,.25); max-width: 640px; margin: 0 auto; }
+.sheet .grab { width: 40px; height: 5px; border-radius: 99px; background: var(--line); margin: 0 auto 12px; }
+.sheet h3 { margin: 0; font-size: 19px; line-height: 1.3; }
+.sheet .sec { font-size: 12px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--tx2); margin: 18px 0 8px; }
+.sheet ol { margin: 0; padding-left: 20px; display:grid; gap: 8px; line-height: 1.45; font-size: 15px; }
+.sheet .tip { background: var(--acc-soft); border-radius: 12px; padding: 10px 12px; font-size: 14px; margin-top: 8px; }
+.sheet .acts { display:flex; gap: 10px; margin-top: 20px; }
+.sheet .acts .btn { flex: 1; white-space: nowrap; }
+.sheet .acts .btn:last-child { flex: 2; }
 @media (min-width: 900px) {
   .weekgrid { display:grid; grid-template-columns: 1.1fr 1fr; gap: 20px; align-items: start; }
   .weekgrid h2:first-child { margin-top: 0; }
@@ -344,6 +368,7 @@ class WeekmenuPanel extends HTMLElement {
         </header>
         <main><div class="wrap">${this._body()}</div></main>
         ${this._footer()}
+        ${this.ui.prep && !this.ui.cook ? this._prepSheet() : ""}
         ${this.ui.cook ? this._cookView() : ""}
         ${this._toastData ? `<div class="toast"><span>${esc(this._toastData.text)}</span>${this._toastData.undo ? `<button data-a="undo">Ongedaan</button>` : ""}</div>` : ""}
       </div>`;
@@ -430,8 +455,9 @@ class WeekmenuPanel extends HTMLElement {
     return `
       <div class="weekgrid">
         <div>
-          <div class="dsum"><span>${sm.days_chosen || 0} van ${sm.days_total || this.days.length} dagen gekozen</span>
-            ${sm.recipe_price ? `<span class="muted">· ca. ${eur(sm.recipe_price)}</span>` : ""}</div>
+          <div class="wkhead"><h2>Deze week</h2>
+            <div class="meta"><b>${sm.days_chosen || 0} van ${sm.days_total || this.days.length}</b> dagen gekozen${sm.recipe_price ? `<br>ca. ${eur(sm.recipe_price)} aan recepten` : ""}</div></div>
+          <div class="prog">${this.days.map((d) => `<i class="${d.choice === "none" ? "none" : d.choice ? "on" : ""}"></i>`).join("")}</div>
           <div class="days">${this.days.map((d) => this._dayRow(d)).join("")}</div>
         </div>
         <div>
@@ -457,63 +483,88 @@ class WeekmenuPanel extends HTMLElement {
 
   _dayRow(d) {
     const today = todayIso();
-    const cls = ["day", this.ui.openDay === d.day ? "open" : "", d.date === today ? "today" : "", d.date && d.date < today ? "past" : ""].join(" ");
+    const open = this.ui.openDay === d.day;
+    const cls = ["day", open ? "open" : "", d.date === today ? "today" : "", d.date && d.date < today ? "past" : ""].join(" ");
     const r = d.choice && d.choice !== "none" ? this._recipeById(d.choice) : null;
-    const cur = r
-      ? `<div class="dc"><span class="e">${esc(r.emoji || "🍽️")}</span><span class="tt">${esc(r.title)}</span>${r.price != null ? `<span class="pr">${eur(r.price)}</span>` : ""}</div>`
+    const dayNum = /^\d{4}-\d{2}-(\d{2})/.exec(d.date || "")?.[1];
+    const main = r
+      ? `<div class="dmain"><span>${esc(r.emoji || "🍽️")}</span><span class="tt">${esc(r.title)}</span></div>`
       : d.choice === "none"
-        ? `<div class="dc none"><span class="e">🚫</span><span class="tt">Niets koken</span></div>`
-        : `<div class="dc open"><span class="tt">Nog kiezen${d.options?.length ? ` · ${d.options.length} opties` : ""}</span></div>`;
-    const head = `<button class="dhead" data-a="day" data-v="${esc(d.day)}">
-      <div class="dn"><b>${esc(cap(DAYS[d.day] || d.day))}</b><span>${d.date === today ? "vandaag" : esc(shortDate(d.date))}${d.slot ? ` · ${esc(d.slot)}` : ""}</span></div>
-      <div class="dmid">${cur}${d.note ? `<div class="dnote">ℹ️ ${esc(d.note)}</div>` : ""}</div><span class="chev">›</span></button>`;
-    if (this.ui.openDay !== d.day) return `<div class="${cls}">${head}</div>`;
+        ? `<div class="dmain none"><span class="tt">Niets koken</span></div>`
+        : `<div class="dmain open"><span class="tt">Nog kiezen · ${(d.options || []).length} opties</span></div>`;
+    const slot = [d.date === today ? "Vandaag" : "", d.slot].filter(Boolean).join(" · ");
+    const chev = `<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>`;
+    const head = `<button class="dhead" data-a="day" data-v="${esc(d.day)}" aria-expanded="${open}">
+      <div class="dtile"><small>${esc(d.day)}</small><b>${dayNum ? Number(dayNum) : ""}</b></div>
+      <div class="dmid">${slot ? `<div class="dslot">${esc(slot)}</div>` : ""}${main}${d.note ? `<div class="dnote">${esc(d.note)}</div>` : ""}</div>
+      <div class="dright">${r?.price != null ? eur(r.price) : ""}${chev}</div></button>`;
+    if (!open) return `<div class="${cls}">${head}</div>`;
     const cards = [...(d.options || []).map((id) => this._optionCard(d, this._recipeById(id))).filter(Boolean), this._noneCard(d)];
-    const n = cards.length;
-    const chosenIdx = d.choice === "none" ? n - 1 : Math.max(0, (d.options || []).indexOf(d.choice));
+    const chosenIdx = d.choice === "none" ? cards.length - 1 : Math.max(0, (d.options || []).indexOf(d.choice));
     return `<div class="${cls}">${head}
       <div class="strip" data-day="${esc(d.day)}">${cards.join("")}</div>
       <div class="sdots" data-day="${esc(d.day)}">${cards.map((_, k) => `<i class="${k === chosenIdx ? "on" : ""}"></i>`).join("")}</div></div>`;
   }
 
-  _recipeIngredients(r) {
+  _recipeIngredients(r, max = 4) {
     const items = (this.plan?.items || []).filter((i) => i.recipe_id === r.id && i.source === "recipe");
-    if (items.length) {
-      return items.map((i) => `<li>${i.qty > 1 ? `${i.qty}× ` : ""}${esc(i.name)}${i.promo?.label ? ` <span class="promo">🏷️ ${esc(i.promo.label)}</span>` : ""}</li>`).join("");
-    }
-    return (r.ingredients || []).map((x) => `<li>${esc(typeof x === "string" ? x : x.text || x.name)}</li>`).join("");
+    const rows = items.length
+      ? items.map((i) => `<li>${i.qty > 1 ? `<span class="q">${i.qty}×</span>` : ""}<span class="n">${esc(i.name)}</span>${i.promo?.label ? `<span class="p">${esc(i.promo.label)}</span>` : ""}</li>`)
+      : (r.ingredients || []).map((x) => `<li><span class="n">${esc(typeof x === "string" ? x : x.text || x.name)}</span></li>`);
+    const extra = rows.length - max;
+    return rows.slice(0, extra > 1 ? max : rows.length).join("") + (extra > 1 ? `<li class="more">+ ${extra} meer</li>` : "");
   }
 
   _optionCard(d, r) {
     if (!r) return "";
     const on = d.choice === r.id;
     const takenOn = !on && (this.days || []).find((x) => x.choice === r.id);
-    const prepOpen = this.ui.prep === `${d.day}:${r.id}`;
-    const ings = this._recipeIngredients(r);
+    const prepKey = `${d.day}:${r.id}`;
     const steps = r.steps || [];
-    const tips = [r.tips?.michelle ? `🤰 ${esc(r.tips.michelle)}` : "", r.tips?.kai ? `👦 ${esc(r.tips.kai)}` : ""].filter(Boolean);
+    const tips = [r.tips?.michelle ? `Michelle: ${esc(r.tips.michelle)}` : "", r.tips?.kai ? `Kai: ${esc(r.tips.kai)}` : ""].filter(Boolean);
+    const meta = [r.minutes ? `${r.minutes} min` : "", r.price != null ? eur(r.price) : "", takenOn ? `nu op ${esc(DAYS[takenOn.day] || takenOn.day)}` : ""].filter(Boolean);
     return `<div class="ocard ${on ? "on" : ""}">
-      <div class="hero">${esc(r.emoji || "🍽️")}</div>
-      <div class="body">
-        <div class="t"><span>${esc(r.title)}</span>${r.price != null ? `<span class="pr">${eur(r.price)}</span>` : ""}</div>
-        <div class="chips">${r.minutes ? `<span class="pill" style="background:var(--bg);color:var(--tx2)">⏱ ${r.minutes} min</span>` : ""}${r.why ? `<span class="pill">🏷️ ${esc(r.why)}</span>` : ""}</div>
-        ${ings ? `<ul class="ings">${ings}</ul>` : ""}
-        ${steps.length || tips.length ? `<button class="linkbtn" data-a="prep" data-v="${esc(d.day)}:${esc(r.id)}">${prepOpen ? "Bereiding verbergen" : "Bereiding bekijken"}</button>` : ""}
-        ${prepOpen ? `<div class="prep"><ol>${steps.map((s) => `<li>${esc(s.text)}</li>`).join("")}</ol>${tips.map((t) => `<div class="tip" style="background:var(--acc-soft);border-radius:10px;padding:8px 10px">${t}</div>`).join("")}</div>` : ""}
-        ${takenOn ? `<div class="muted small">Nu gekozen voor ${esc(DAYS[takenOn.day] || takenOn.day)}</div>` : ""}
-        <div class="choose"><button class="btn" data-a="choose" data-d="${esc(d.day)}" data-v="${esc(r.id)}">${on ? `✓ Gekozen voor ${esc(DAYS[d.day] || d.day)}` : "Kies dit"}</button></div>
+      <div class="ohead"><div class="oemoji">${esc(r.emoji || "🍽️")}</div>
+        <div><div class="otitle">${esc(r.title)}</div>
+          <div class="ometa">${meta.map((m, k) => `<span class="${k ? "dot" : ""}">${m}</span>`).join("")}</div></div></div>
+      ${r.why ? `<div><span class="otag">${esc(r.why)}</span></div>` : ""}
+      ${(() => { const li = this._recipeIngredients(r, 4); return li ? `<ul class="ings">${li}</ul>` : ""; })()}
+      <div class="ofoot">
+        ${steps.length || tips.length ? `<button class="linkbtn" data-a="prep" data-v="${esc(prepKey)}">Bereiding bekijken</button>` : ""}
+        <button class="btn" data-a="choose" data-d="${esc(d.day)}" data-v="${esc(r.id)}">${on ? `✓ Gekozen voor ${esc(DAYS[d.day] || d.day)}` : "Kies dit"}</button>
       </div></div>`;
+  }
+
+  _prepSheet() {
+    const [dk, rid] = String(this.ui.prep || "").split(":");
+    const d = (this.days || []).find((x) => x.day === dk);
+    const r = this._recipeById(rid);
+    if (!d || !r) return "";
+    const on = d.choice === r.id;
+    const tips = [r.tips?.michelle ? `<b>Michelle</b> · ${esc(r.tips.michelle)}` : "", r.tips?.kai ? `<b>Kai</b> · ${esc(r.tips.kai)}` : ""].filter(Boolean);
+    const meta = [r.minutes ? `${r.minutes} min` : "", r.servings ? esc(r.servings) : "", r.price != null ? eur(r.price) : ""].filter(Boolean).join(" · ");
+    return `<div class="sheetbg" data-a="prep" data-v=""></div>
+      <div class="sheet" role="dialog" aria-label="${esc(r.title)}">
+        <div class="grab"></div>
+        <div class="ohead"><div class="oemoji" style="background:var(--bg)">${esc(r.emoji || "🍽️")}</div>
+          <div><h3>${esc(r.title)}</h3><div class="ometa">${meta}</div></div></div>
+        ${r.why ? `<div style="margin-top:10px"><span class="otag">${esc(r.why)}</span></div>` : ""}
+        <div class="sec">Ingrediënten</div><ul class="ings">${this._recipeIngredients(r, 99)}</ul>
+        ${(r.pantry || []).length ? `<div class="muted small" style="margin-top:6px">Uit de kast: ${esc(r.pantry.join(", "))}</div>` : ""}
+        ${(r.steps || []).length ? `<div class="sec">Bereiding</div><ol>${r.steps.map((s) => `<li>${esc(s.text)}</li>`).join("")}</ol>` : ""}
+        ${tips.map((t) => `<div class="tip">${t}</div>`).join("")}
+        <div class="acts"><button class="btn ghost" data-a="prep" data-v="">Sluiten</button>
+          <button class="btn" data-a="choose" data-d="${esc(d.day)}" data-v="${esc(r.id)}">${on ? `✓ Gekozen voor ${esc(DAYS[d.day] || d.day)}` : `Kies voor ${esc(DAYS[d.day] || d.day)}`}</button></div>
+      </div>`;
   }
 
   _noneCard(d) {
     const on = d.choice === "none";
     return `<div class="ocard nocook ${on ? "on" : ""}">
-      <div class="hero">🚫</div>
-      <div class="body">
-        <div class="t"><span>Niets koken</span></div>
-        <div class="muted small">Uit eten, restjes, of bij opa en oma.</div>
-        <div class="choose"><button class="btn" data-a="choose" data-d="${esc(d.day)}" data-v="none">${on ? `✓ Gekozen voor ${esc(DAYS[d.day] || d.day)}` : "Kies dit"}</button></div>
-      </div></div>`;
+      <div class="ohead"><div class="oemoji">🚫</div>
+        <div><div class="otitle">Niets koken</div><div class="ometa"><span>Uit eten, restjes of bij opa en oma</span></div></div></div>
+      <div class="ofoot"><button class="btn" data-a="choose" data-d="${esc(d.day)}" data-v="none">${on ? `✓ Gekozen voor ${esc(DAYS[d.day] || d.day)}` : "Kies dit"}</button></div>
+    </div>`;
   }
 
   _rcard(r) {
@@ -875,11 +926,12 @@ class WeekmenuPanel extends HTMLElement {
         return;
       }
       case "day": ui.openDay = ui.openDay === v ? null : v; ui.prep = null; ui.jump = true; break;
-      case "prep": ui.prep = ui.prep === v ? null : v; break;
+      case "prep": ui.prep = v && ui.prep !== v ? v : null; break;
       case "choose": {
         const dk = el?.dataset.d;
         const d = (this.days || []).find((x) => x.day === dk); if (!d) return;
         const choice = d.choice === v ? null : v;
+        ui.prep = null;
         const prev = (this.days || []).find((x) => x !== d && choice && choice !== "none" && x.choice === choice);
         d.choice = choice; if (prev) prev.choice = null;
         this._render();
