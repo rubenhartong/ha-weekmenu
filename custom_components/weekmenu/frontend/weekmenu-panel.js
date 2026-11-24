@@ -3,6 +3,13 @@
 
 const IMG = (id) => `https://storefront-prod.nl.picnicinternational.com/static/images/${encodeURIComponent(id)}/small.png`;
 
+// Foto van een gerecht: recipe.image_url (bijv. van een Picnic-recept) of recipe.image_id (Picnic-afbeelding).
+const DISH = (r) => {
+  if (r?.image_url && /^https:\/\//.test(r.image_url)) return r.image_url;
+  if (r?.image_id) return `https://storefront-prod.nl.picnicinternational.com/static/images/${encodeURIComponent(r.image_id)}/large.png`;
+  return null;
+};
+
 const esc = (s) =>
   String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
@@ -199,6 +206,10 @@ h2 { font-size: 17px; margin: 24px 4px 10px; font-weight: 650; }
 .strip::-webkit-scrollbar { display:none; }
 .ocard { scroll-snap-align: start; flex: 0 0 min(86%, 340px); border-radius: 16px; background: var(--bg); border: 1.5px solid var(--line); display:flex; flex-direction:column; padding: 14px; gap: 12px; position: relative; }
 .ocard.on { border-color: var(--acc); box-shadow: 0 0 0 1px var(--acc) inset; }
+.ophoto { margin: -14px -14px 0; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 14px 14px 0 0; background: var(--card); }
+.ophoto img, .sphoto img { width: 100%; height: 100%; object-fit: cover; display:block; }
+.sphoto { aspect-ratio: 16 / 9; border-radius: 16px; overflow: hidden; margin: 2px 0 14px; background: var(--bg); }
+.dthumb { width: 26px; height: 26px; border-radius: 7px; object-fit: cover; flex: 0 0 26px; }
 .ocard .badge { position:absolute; top: 12px; right: 12px; background: var(--acc); color:#fff; font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 99px; }
 .ohead { display:flex; gap: 12px; align-items:flex-start; padding-right: 0; }
 .oemoji { width: 48px; height: 48px; flex: 0 0 48px; border-radius: 12px; background: var(--card); display:flex; align-items:center; justify-content:center; font-size: 26px; }
@@ -527,7 +538,7 @@ class WeekmenuPanel extends HTMLElement {
     const r = d.choice && d.choice !== "none" ? this._recipeById(d.choice) : null;
     const dayNum = /^\d{4}-\d{2}-(\d{2})/.exec(d.date || "")?.[1];
     const main = r
-      ? `<div class="dmain"><span>${esc(r.emoji || "🍽️")}</span><span class="tt">${esc(r.title)}</span></div>`
+      ? `<div class="dmain">${DISH(r) ? `<img class="dthumb" loading="lazy" referrerpolicy="no-referrer" src="${esc(DISH(r))}" alt="" onerror="this.replaceWith(document.createTextNode('${esc(r.emoji || "🍽️")}'))">` : `<span>${esc(r.emoji || "🍽️")}</span>`}<span class="tt">${esc(r.title)}</span></div>`
       : d.choice === "none"
         ? `<div class="dmain none"><span class="tt">Niets koken</span></div>`
         : `<div class="dmain open"><span class="tt">Nog kiezen</span></div>`;
@@ -562,8 +573,10 @@ class WeekmenuPanel extends HTMLElement {
     const steps = r.steps || [];
     const tips = [r.tips?.michelle ? `Michelle: ${esc(r.tips.michelle)}` : "", r.tips?.kai ? `Kai: ${esc(r.tips.kai)}` : ""].filter(Boolean);
     const meta = [r.minutes ? `${r.minutes} min` : "", r.price != null ? eur(r.price) : "", takenOn ? `nu op ${esc(DAYS[takenOn.day] || takenOn.day)}` : ""].filter(Boolean);
+    const img = DISH(r);
     return `<div class="ocard ${on ? "on" : ""}">
-      <div class="ohead"><div class="oemoji">${esc(r.emoji || "🍽️")}</div>
+      ${img ? `<div class="ophoto"><img loading="lazy" referrerpolicy="no-referrer" src="${esc(img)}" alt="" onerror="this.parentElement.remove()"></div>` : ""}
+      <div class="ohead">${img ? "" : `<div class="oemoji">${esc(r.emoji || "🍽️")}</div>`}
         <div><div class="otitle">${esc(r.title)}</div>
           <div class="ometa">${meta.map((m, k) => `<span class="${k ? "dot" : ""}">${m}</span>`).join("")}</div></div></div>
       ${r.why ? `<div><span class="otag">${esc(r.why)}</span></div>` : ""}
@@ -585,7 +598,8 @@ class WeekmenuPanel extends HTMLElement {
     return `<div class="sheetbg" data-a="prep" data-v=""></div>
       <div class="sheet" role="dialog" aria-label="${esc(r.title)}">
         <div class="grab"></div>
-        <div class="ohead"><div class="oemoji" style="background:var(--bg)">${esc(r.emoji || "🍽️")}</div>
+        ${DISH(r) ? `<div class="sphoto"><img referrerpolicy="no-referrer" src="${esc(DISH(r))}" alt="" onerror="this.parentElement.remove()"></div>` : ""}
+        <div class="ohead">${DISH(r) ? "" : `<div class="oemoji" style="background:var(--bg)">${esc(r.emoji || "🍽️")}</div>`}
           <div><h3>${esc(r.title)}</h3><div class="ometa">${meta}</div></div></div>
         ${r.why ? `<div style="margin-top:10px"><span class="otag">${esc(r.why)}</span></div>` : ""}
         <div class="sec">Ingrediënten</div><ul class="ings">${this._recipeIngredients(r, 99)}</ul>

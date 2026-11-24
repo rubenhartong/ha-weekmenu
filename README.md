@@ -38,6 +38,8 @@ plan:
   recipes:
     - id: r1
       emoji: "🐟"
+      image_url: "https://…"   # optioneel: foto van het gerecht (bijv. van een Picnic-recept)
+      image_id: null          # of een Picnic-afbeelding-id
       title: Zalm uit de oven met krieltjes
       minutes: 30
       price: 18.77
