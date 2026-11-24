@@ -19,6 +19,12 @@ const GROUPS = [
   ["extra", "Extra toegevoegd"],
 ];
 
+const DAYS = { ma: "maandag", di: "dinsdag", wo: "woensdag", do: "donderdag", vr: "vrijdag", za: "zaterdag", zo: "zondag" };
+const MONTHS = ["jan", "feb", "mrt", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec"];
+const cap = (t) => (t ? t[0].toUpperCase() + t.slice(1) : "");
+const shortDate = (iso) => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || ""); return m ? `${Number(m[3])} ${MONTHS[Number(m[2]) - 1]}` : ""; };
+const todayIso = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
+
 const STATUS = {
   none: { label: "Nog geen voorstel", icon: "🗓️" },
   proposed: { label: "Voorstel klaar", icon: "📝" },
@@ -159,6 +165,53 @@ h2 { font-size: 17px; margin: 24px 4px 10px; font-weight: 650; }
 .empty .e { font-size: 52px; }
 .toast { position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%); background: #1d2320; color: #fff; border-radius: 14px; padding: 12px 16px; display:flex; gap: 16px; align-items:center; z-index: 30; box-shadow: 0 8px 24px rgba(0,0,0,.25); font-weight: 500; }
 .toast button { color: #7fd6a1; font-weight: 700; }
+/* days */
+.dsum { font-size: 15px; font-weight: 650; margin: 0 4px 10px; display:flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.dsum .muted { font-weight: 500; }
+.days { background: var(--card); border-radius: var(--r); overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,.05), 0 4px 16px rgba(0,0,0,.04); }
+.day { border-bottom: 1px solid var(--line); }
+.day:last-child { border-bottom: 0; }
+.day.past .dhead { opacity: .5; }
+.dhead { width: 100%; display:flex; align-items:center; gap: 12px; padding: 13px 14px; text-align:left; }
+.day.today .dhead { background: var(--acc-soft); }
+.dn { width: 86px; flex: 0 0 86px; line-height: 1.2; }
+.dn b { display:block; font-size: 15px; }
+.dn span { font-size: 12.5px; color: var(--tx2); }
+.day.today .dn span { color: var(--acc); font-weight: 650; }
+.dc { flex:1; min-width:0; display:flex; align-items:center; gap: 10px; }
+.dc .e { font-size: 26px; flex: 0 0 auto; }
+.dc .tt { flex:1; min-width:0; font-weight: 600; font-size: 15px; line-height: 1.25; overflow:hidden; text-overflow: ellipsis; display:-webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.dc .pr { color: var(--tx2); font-size: 13px; white-space: nowrap; }
+.dc.open { color: var(--warn); font-weight: 600; }
+.dc.none { color: var(--tx2); }
+.chev { color: var(--tx2); font-size: 20px; transition: transform .2s; }
+.day.open .chev { transform: rotate(90deg); }
+.dmid { flex:1; min-width:0; display:grid; gap: 3px; }
+.dnote { font-size: 12.5px; color: var(--tx2); font-weight: 500; }
+.strip { display:flex; align-items: flex-start; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 6px 14px 10px; scrollbar-width: none; scroll-padding: 0 14px; }
+.strip::-webkit-scrollbar { display:none; }
+.ocard { scroll-snap-align: start; flex: 0 0 min(84%, 330px); border-radius: 16px; background: var(--bg); border: 2px solid transparent; display:flex; flex-direction:column; overflow:hidden; }
+.ocard.on { border-color: var(--acc); background: var(--card); box-shadow: 0 0 0 3px var(--acc-soft); }
+.ocard .hero { height: 86px; display:flex; align-items:center; justify-content:center; font-size: 52px; background: linear-gradient(135deg, #fdf3e3, #e8f5ec); }
+.ocard.nocook .hero { background: linear-gradient(135deg, #eef0f3, #f6f1ea); }
+.ocard .body { padding: 12px 14px 14px; display:grid; gap: 8px; flex:1; align-content: start; }
+.ocard .t { font-weight: 650; font-size: 16px; line-height: 1.25; display:flex; gap: 8px; }
+.ocard .t span:first-child { flex:1; }
+.ocard .t .pr { font-weight: 600; color: var(--tx2); white-space: nowrap; }
+.ocard .ings { margin: 0; padding: 0; list-style: none; font-size: 13.5px; display:grid; gap: 3px; }
+.ocard .ings li::before { content: "• "; color: var(--tx2); }
+.ocard .ings .promo { color: var(--acc); font-weight: 600; }
+.ocard .prep { font-size: 13.5px; display:grid; gap: 6px; }
+.ocard .prep ol { margin: 0; padding-left: 20px; display:grid; gap: 4px; }
+.ocard .linkbtn { color: var(--acc); font-weight: 650; font-size: 14px; text-align:left; }
+.ocard .choose { margin-top: auto; }
+.ocard .choose .btn { width: 100%; min-height: 44px; padding: 10px 14px; }
+.ocard.on .choose .btn { background: var(--acc-soft); color: var(--acc); }
+.sdots { display:flex; gap: 6px; justify-content:center; padding: 0 0 12px; }
+.sdots i { width: 7px; height: 7px; border-radius: 99px; background: var(--line); transition: width .2s; }
+.sdots i.on { background: var(--acc); width: 18px; }
+.sdots i.ch { background: var(--acc); opacity: .45; }
+.warnline { color: var(--warn); font-weight: 600; font-size: 13.5px; }
 @media (min-width: 900px) {
   .weekgrid { display:grid; grid-template-columns: 1.1fr 1fr; gap: 20px; align-items: start; }
   .weekgrid h2:first-child { margin-top: 0; }
@@ -241,7 +294,10 @@ class WeekmenuPanel extends HTMLElement {
 
   // ---------- helpers ----------
   get plan() { return this.data?.plan || null; }
-  _items() { return this.plan?.items || []; }
+  _items() { return this.data?.view?.items || this.plan?.items || []; }
+  get days() { return this.plan?.days || null; }
+  _sum() { return this.data?.view?.summary || null; }
+  _recipeById(id) { return (this.plan?.recipes || []).find((r) => r.id === id); }
   _active() { return this._items().filter((i) => !i.removed && i.qty > 0); }
   _totals() {
     let sum = 0, save = 0, unknown = 0;
@@ -271,6 +327,8 @@ class WeekmenuPanel extends HTMLElement {
     const scroll = main ? main.scrollTop : 0;
     const car = root.querySelector(".carousel");
     const carScroll = car ? car.scrollLeft : 0;
+    const strip = root.querySelector(".strip");
+    const stripScroll = strip ? { day: strip.dataset.day, x: strip.scrollLeft } : null;
     const focused = root.activeElement?.id;
     const focusVal = focused ? root.getElementById(focused)?.value : null;
 
@@ -302,6 +360,16 @@ class WeekmenuPanel extends HTMLElement {
     if (m2) m2.scrollTop = scroll;
     const c2 = root.querySelector(".carousel");
     if (c2) c2.scrollLeft = carScroll;
+    const s2 = root.querySelector(".strip");
+    if (s2) {
+      if (this.ui.jump) {
+        // just opened: show the chosen option
+        const on = s2.querySelector(".ocard.on");
+        s2.scrollLeft = on ? on.offsetLeft - 14 : 0;
+        this.ui.jump = false;
+      } else if (stripScroll && stripScroll.day === s2.dataset.day) s2.scrollLeft = stripScroll.x;
+      this._stripDots(s2);
+    }
     if (focused) {
       const el = root.getElementById(focused);
       if (el) { el.value = focusVal ?? ""; el.focus(); }
@@ -324,6 +392,7 @@ class WeekmenuPanel extends HTMLElement {
     const t = this._totals();
     const recipes = p.recipes || [];
     const fails = (p.results || []).filter((r) => !r.ok).length;
+    if (this.days?.length) return this._weekDaysView(p, st, t, fails);
     return `
       <div class="weekgrid">
         <div>
@@ -349,6 +418,102 @@ class WeekmenuPanel extends HTMLElement {
             : `<div class="card muted">Geen recepten deze week.</div>`}
         </div>
       </div>`;
+  }
+
+  _openDaysWarn() {
+    const n = (this._sum()?.days_open || []).length;
+    return n ? `<div class="warnline">⚠️ ${n} ${n === 1 ? "dag" : "dagen"} nog niet gekozen (telt als niets koken)</div>` : "";
+  }
+
+  _weekDaysView(p, st, t, fails) {
+    const sm = this._sum() || {};
+    return `
+      <div class="weekgrid">
+        <div>
+          <div class="dsum"><span>${sm.days_chosen || 0} van ${sm.days_total || this.days.length} dagen gekozen</span>
+            ${sm.recipe_price ? `<span class="muted">· ca. ${eur(sm.recipe_price)}</span>` : ""}</div>
+          <div class="days">${this.days.map((d) => this._dayRow(d)).join("")}</div>
+        </div>
+        <div>
+          <div class="card status">
+            <div class="row"><span class="pill ${p.status === "approved" ? "" : "warn"}">${st.icon} ${st.label}</span>
+              ${p.delivery ? `<span class="muted small">Bezorging ${esc(p.delivery)}</span>` : ""}</div>
+            <div class="row"><span class="big">${eur(t.sum)}</span>
+              <span class="muted">${t.count} producten</span>
+              ${t.save > 0 ? `<span class="save">${eur(t.save)} voordeel</span>` : ""}</div>
+            ${p.advice ? `<div class="small">💡 ${esc(p.advice)}</div>` : ""}
+            ${p.status === "approved"
+              ? `<div class="small">Kies het bezorgmoment en reken af in de Picnic-app.${fails ? ` <span class="res-bad">${fails} product${fails > 1 ? "en" : ""} niet gelukt.</span>` : ""}</div>
+                 <button class="btn ghost" data-a="reopen">Toch nog iets aanpassen</button>`
+              : `${this._openDaysWarn()}
+                 <div class="row"><button class="btn" data-a="tab" data-v="list">Bekijk lijst</button>${this._approveBtn()}</div>
+                 ${p.order_deadline ? `<div class="muted small">Bestellen kan tot ${esc(p.order_deadline)}</div>` : ""}`}
+          </div>
+          ${this._michelleCard()}
+          ${this._questionsCard()}
+        </div>
+      </div>`;
+  }
+
+  _dayRow(d) {
+    const today = todayIso();
+    const cls = ["day", this.ui.openDay === d.day ? "open" : "", d.date === today ? "today" : "", d.date && d.date < today ? "past" : ""].join(" ");
+    const r = d.choice && d.choice !== "none" ? this._recipeById(d.choice) : null;
+    const cur = r
+      ? `<div class="dc"><span class="e">${esc(r.emoji || "🍽️")}</span><span class="tt">${esc(r.title)}</span>${r.price != null ? `<span class="pr">${eur(r.price)}</span>` : ""}</div>`
+      : d.choice === "none"
+        ? `<div class="dc none"><span class="e">🚫</span><span class="tt">Niets koken</span></div>`
+        : `<div class="dc open"><span class="tt">Nog kiezen${d.options?.length ? ` · ${d.options.length} opties` : ""}</span></div>`;
+    const head = `<button class="dhead" data-a="day" data-v="${esc(d.day)}">
+      <div class="dn"><b>${esc(cap(DAYS[d.day] || d.day))}</b><span>${d.date === today ? "vandaag" : esc(shortDate(d.date))}${d.slot ? ` · ${esc(d.slot)}` : ""}</span></div>
+      <div class="dmid">${cur}${d.note ? `<div class="dnote">ℹ️ ${esc(d.note)}</div>` : ""}</div><span class="chev">›</span></button>`;
+    if (this.ui.openDay !== d.day) return `<div class="${cls}">${head}</div>`;
+    const cards = [...(d.options || []).map((id) => this._optionCard(d, this._recipeById(id))).filter(Boolean), this._noneCard(d)];
+    const n = cards.length;
+    const chosenIdx = d.choice === "none" ? n - 1 : Math.max(0, (d.options || []).indexOf(d.choice));
+    return `<div class="${cls}">${head}
+      <div class="strip" data-day="${esc(d.day)}">${cards.join("")}</div>
+      <div class="sdots" data-day="${esc(d.day)}">${cards.map((_, k) => `<i class="${k === chosenIdx ? "on" : ""}"></i>`).join("")}</div></div>`;
+  }
+
+  _recipeIngredients(r) {
+    const items = (this.plan?.items || []).filter((i) => i.recipe_id === r.id && i.source === "recipe");
+    if (items.length) {
+      return items.map((i) => `<li>${i.qty > 1 ? `${i.qty}× ` : ""}${esc(i.name)}${i.promo?.label ? ` <span class="promo">🏷️ ${esc(i.promo.label)}</span>` : ""}</li>`).join("");
+    }
+    return (r.ingredients || []).map((x) => `<li>${esc(typeof x === "string" ? x : x.text || x.name)}</li>`).join("");
+  }
+
+  _optionCard(d, r) {
+    if (!r) return "";
+    const on = d.choice === r.id;
+    const takenOn = !on && (this.days || []).find((x) => x.choice === r.id);
+    const prepOpen = this.ui.prep === `${d.day}:${r.id}`;
+    const ings = this._recipeIngredients(r);
+    const steps = r.steps || [];
+    const tips = [r.tips?.michelle ? `🤰 ${esc(r.tips.michelle)}` : "", r.tips?.kai ? `👦 ${esc(r.tips.kai)}` : ""].filter(Boolean);
+    return `<div class="ocard ${on ? "on" : ""}">
+      <div class="hero">${esc(r.emoji || "🍽️")}</div>
+      <div class="body">
+        <div class="t"><span>${esc(r.title)}</span>${r.price != null ? `<span class="pr">${eur(r.price)}</span>` : ""}</div>
+        <div class="chips">${r.minutes ? `<span class="pill" style="background:var(--bg);color:var(--tx2)">⏱ ${r.minutes} min</span>` : ""}${r.why ? `<span class="pill">🏷️ ${esc(r.why)}</span>` : ""}</div>
+        ${ings ? `<ul class="ings">${ings}</ul>` : ""}
+        ${steps.length || tips.length ? `<button class="linkbtn" data-a="prep" data-v="${esc(d.day)}:${esc(r.id)}">${prepOpen ? "Bereiding verbergen" : "Bereiding bekijken"}</button>` : ""}
+        ${prepOpen ? `<div class="prep"><ol>${steps.map((s) => `<li>${esc(s.text)}</li>`).join("")}</ol>${tips.map((t) => `<div class="tip" style="background:var(--acc-soft);border-radius:10px;padding:8px 10px">${t}</div>`).join("")}</div>` : ""}
+        ${takenOn ? `<div class="muted small">Nu gekozen voor ${esc(DAYS[takenOn.day] || takenOn.day)}</div>` : ""}
+        <div class="choose"><button class="btn" data-a="choose" data-d="${esc(d.day)}" data-v="${esc(r.id)}">${on ? `✓ Gekozen voor ${esc(DAYS[d.day] || d.day)}` : "Kies dit"}</button></div>
+      </div></div>`;
+  }
+
+  _noneCard(d) {
+    const on = d.choice === "none";
+    return `<div class="ocard nocook ${on ? "on" : ""}">
+      <div class="hero">🚫</div>
+      <div class="body">
+        <div class="t"><span>Niets koken</span></div>
+        <div class="muted small">Uit eten, restjes, of bij opa en oma.</div>
+        <div class="choose"><button class="btn" data-a="choose" data-d="${esc(d.day)}" data-v="none">${on ? `✓ Gekozen voor ${esc(DAYS[d.day] || d.day)}` : "Kies dit"}</button></div>
+      </div></div>`;
   }
 
   _rcard(r) {
@@ -402,7 +567,8 @@ class WeekmenuPanel extends HTMLElement {
   _footer() {
     if (!this.data || this.ui.tab !== "list" || this.ui.seg !== "week" || !this.plan || this.plan.status === "approved") return "";
     const t = this._totals();
-    return `<div class="footer"><div class="sum"><b>${eur(t.sum)}</b><br><span class="muted small">${t.count} producten${t.save > 0 ? ` · <span class="save">${eur(t.save)} voordeel</span>` : ""}</span></div>${this._approveBtn()}</div>`;
+    const open = (this._sum()?.days_open || []).length;
+    return `<div class="footer"><div class="sum"><b>${eur(t.sum)}</b><br><span class="muted small">${t.count} producten${t.save > 0 ? ` · <span class="save">${eur(t.save)} voordeel</span>` : ""}${open ? ` · <span class="warnline">${open} ${open === 1 ? "dag" : "dagen"} nog niet gekozen</span>` : ""}</span></div>${this._approveBtn()}</div>`;
   }
 
   _listView() {
@@ -454,12 +620,19 @@ class WeekmenuPanel extends HTMLElement {
   }
 
   // ---------- cooking ----------
+  _cookRecipes() {
+    if (!this.days?.length) return (this.plan?.recipes || []).map((r) => ({ r, day: null }));
+    return this.days.filter((d) => d.choice && d.choice !== "none").map((d) => ({ r: this._recipeById(d.choice), day: d.day })).filter((x) => x.r);
+  }
+
   _cookPick() {
-    const recipes = this.plan?.recipes || [];
+    const list = this._cookRecipes();
+    if (this.days?.length && !list.length) return `<div class="empty"><div class="e">👩‍🍳</div><p>Nog geen recepten gekozen.<br>Kies per dag in het tabblad Week.</p></div>`;
+    const recipes = list.map((x) => ({ ...x.r, _day: x.day }));
     if (!recipes.length) return `<div class="empty"><div class="e">👩‍🍳</div><p>Nog geen recepten deze week.</p></div>`;
     return `<h2 style="margin-top:4px">Wat gaan we koken?</h2><div class="pick">${recipes.map((r) => `
       <button data-a="cook" data-v="${esc(r.id)}"><span class="e">${esc(r.emoji || "🍽️")}</span>
-        <span style="flex:1"><b>${esc(r.title)}</b><br><span class="muted small">${r.minutes ? `${r.minutes} min · ` : ""}${(r.steps || []).length} stappen${r.rating ? (r.rating > 0 ? " · 👍" : " · 👎") : ""}</span></span>
+        <span style="flex:1">${r._day ? `<span class="muted small">${esc(cap(DAYS[r._day] || r._day))}</span><br>` : ""}<b>${esc(r.title)}</b><br><span class="muted small">${r.minutes ? `${r.minutes} min · ` : ""}${(r.steps || []).length} stappen${r.rating ? (r.rating > 0 ? " · 👍" : " · 👎") : ""}</span></span>
         <span style="color:var(--acc);font-weight:700">›</span></button>`).join("")}</div>`;
   }
 
@@ -571,6 +744,7 @@ class WeekmenuPanel extends HTMLElement {
     });
     root.querySelectorAll('input[id^="own-"]').forEach((inp) =>
       inp.addEventListener("keydown", (e) => { if (e.key === "Enter") this._act("own", null, { dataset: { q: inp.id.slice(4) } }); }));
+    root.querySelectorAll(".strip").forEach((st) => st.addEventListener("scroll", () => this._stripDots(st), { passive: true }));
     // swipe left to remove
     root.querySelectorAll(".item[data-key], .item[data-std]").forEach((el) => this._swipe(el));
     // swipe through cooking steps
@@ -608,6 +782,15 @@ class WeekmenuPanel extends HTMLElement {
       } else el.style.transform = "";
       x0 = null;
     });
+  }
+
+  _stripDots(st) {
+    const cards = st.querySelectorAll(".ocard");
+    if (!cards.length) return;
+    const w = cards.length > 1 ? cards[1].offsetLeft - cards[0].offsetLeft : st.clientWidth;
+    const idx = Math.max(0, Math.min(cards.length - 1, Math.round(st.scrollLeft / Math.max(1, w))));
+    const dots = this.shadowRoot.querySelectorAll(`.sdots[data-day="${st.dataset.day}"] i`);
+    dots.forEach((dot, k) => { dot.classList.toggle("on", k === idx); dot.classList.toggle("ch", k !== idx && cards[k].classList.contains("on")); });
   }
 
   _find(key) { return this._items().find((i) => i.key === key); }
@@ -665,7 +848,8 @@ class WeekmenuPanel extends HTMLElement {
         ui.sure = false; ui.busy = true; this._render();
         try {
           const r = await this._ws({ type: "weekmenu/approve" });
-          this._toast(r.failed ? `${r.added} in je mandje, ${r.failed} niet gelukt` : `Zondag geregeld. ${r.added} producten in je mandje.`);
+          const open = (r.days_open || []).length;
+          this._toast((r.failed ? `${r.added} in je mandje, ${r.failed} niet gelukt` : `Zondag geregeld. ${r.added} producten in je mandje.`) + (open ? ` ${open} ${open === 1 ? "dag" : "dagen"} zonder keuze = niets koken.` : ""));
           ui.tab = "week";
         } finally { ui.busy = false; }
         break;
@@ -688,6 +872,19 @@ class WeekmenuPanel extends HTMLElement {
         inp.value = "";
         await this._ws({ type: "weekmenu/answer_text", question_id: qid, text });
         this._toast("Genoteerd, die bied ik volgende keer ook aan");
+        return;
+      }
+      case "day": ui.openDay = ui.openDay === v ? null : v; ui.prep = null; ui.jump = true; break;
+      case "prep": ui.prep = ui.prep === v ? null : v; break;
+      case "choose": {
+        const dk = el?.dataset.d;
+        const d = (this.days || []).find((x) => x.day === dk); if (!d) return;
+        const choice = d.choice === v ? null : v;
+        const prev = (this.days || []).find((x) => x !== d && choice && choice !== "none" && x.choice === choice);
+        d.choice = choice; if (prev) prev.choice = null;
+        this._render();
+        await this._ws({ type: "weekmenu/choose_day", day: dk, choice });
+        if (prev) this._toast(`Verplaatst van ${DAYS[prev.day] || prev.day} naar ${DAYS[dk] || dk}`);
         return;
       }
       case "cook": ui.cook = v; ui.step = -1; ui.checked = {}; this._wakeLock(); break;

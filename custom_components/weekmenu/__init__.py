@@ -35,6 +35,7 @@ from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.storage import Store
 from homeassistant.util import dt as dt_util
 
+from . import logic
 from .const import (
     DOMAIN,
     PANEL_URL,
@@ -84,11 +85,16 @@ def _norm_item(raw: dict[str, Any], default_source: str = "extra") -> dict[str, 
         "promo": raw.get("promo"),
         "source": raw.get("source") or default_source,
         "recipe": raw.get("recipe"),
+        "recipe_id": (str(raw["recipe_id"]) if raw.get("recipe_id") else None),
         "note": raw.get("note"),
         "question": raw.get("question"),
         "removed": bool(raw.get("removed", False)),
     }
-    item["key"] = raw.get("key") or _item_key(item)
+    key = raw.get("key") or _item_key(item)
+    # recipe ingredients stay separate per recipe, so they can follow the day choice
+    if item["source"] == "recipe" and item["recipe_id"] and "@" not in key:
+        key = f"{key}@{item['recipe_id']}"
+    item["key"] = key
     return item
 
 
@@ -198,6 +204,10 @@ class WeekmenuManager:
                 opt.setdefault("id", f"o{j + 1}")
                 opt["items"] = _norm_items(opt.get("items") or [], "snack")
             questions.append(q)
+        days = logic.norm_days(plan.get("days"), {r["id"] for r in recipes})
+        if days:
+            for r in recipes:
+                r["selected"] = False
         self.data["plan"] = {
             "week": plan.get("week"),
             "delivery": plan.get("delivery"),
@@ -206,6 +216,7 @@ class WeekmenuManager:
             "generated_at": dt_util.utcnow().isoformat(),
             "status": "proposed",
             "recipes": recipes,
+            "days": days,
             "items": _norm_items(plan.get("items") or [], "standard"),
             "michelle": michelle,
             "questions": questions,
@@ -214,12 +225,17 @@ class WeekmenuManager:
         }
         if standard_items is not None:
             self.data["standard_items"] = _norm_items(standard_items, "standard")
+        logic.sync_selected(self.data["plan"])
         self.changed()
         self.hass.bus.async_fire(
             f"{DOMAIN}_plan_imported",
             {
                 "week": plan.get("week"),
                 "recipes": [r.get("title") for r in recipes],
+                "days": [
+                    {"day": d["day"], "date": d.get("date"), "options": len(d["options"]), "choice": d["choice"]}
+                    for d in days or []
+                ],
                 "michelle": (
                     {
                         "day_label": michelle.get("day_label"),
@@ -250,7 +266,16 @@ class WeekmenuManager:
 
     @callback
     def set_qty(self, key: str, qty: int) -> None:
-        item = self._find(key)
+        plan = self._plan()
+        exact = next((i for i in plan["items"] if i["key"] == key), None)
+        if exact is None:  # merged recipe row (same product in several chosen recipes)
+            try:
+                logic.set_qty(plan, key, qty)
+            except logic.PlanError as err:
+                raise HomeAssistantError(str(err)) from err
+            self.changed()
+            return
+        item = exact
         if int(qty) <= 0 and not item["removed"] and item.get("source") == "advice":
             self.restock(item, "skipped")
         item["qty"] = max(0, int(qty))
@@ -259,13 +284,41 @@ class WeekmenuManager:
 
     @callback
     def set_removed(self, key: str, removed: bool) -> None:
-        item = self._find(key)
+        plan = self._plan()
+        exact = next((i for i in plan["items"] if i["key"] == key), None)
+        if exact is None:
+            try:
+                logic.set_removed(plan, key, removed)
+            except logic.PlanError as err:
+                raise HomeAssistantError(str(err)) from err
+            self.changed()
+            return
+        item = exact
         if removed and not item["removed"] and item.get("source") == "advice":
             self.restock(item, "skipped")
         item["removed"] = removed
         if not removed and item["qty"] == 0:
             item["qty"] = 1
         self.changed()
+
+    @callback
+    def choose_day(self, day: str, choice: str | None) -> dict[str, Any]:
+        plan = self._plan()
+        try:
+            res = logic.choose_day(plan, day, choice)
+        except logic.PlanError as err:
+            raise HomeAssistantError(str(err)) from err
+        self.changed()
+        recipe = next((r for r in plan.get("recipes") or [] if r.get("id") == res["choice"]), None)
+        self.hass.bus.async_fire(
+            f"{DOMAIN}_day_chosen",
+            {**res, "title": recipe.get("title") if recipe else None, "summary": logic.summary(plan)},
+        )
+        return res
+
+    def snapshot(self) -> dict[str, Any]:
+        """Stored data plus a computed view (items that count, day summary) for the panel."""
+        return {**self.data, "view": logic.view(self.data.get("plan"))}
 
     @callback
     def add_items(self, raw_items: list[dict[str, Any]]) -> None:
@@ -451,7 +504,10 @@ class WeekmenuManager:
         if not entries:
             raise HomeAssistantError("De Picnic-koppeling is niet actief.")
         entry_id = entries[0].entry_id
-        todo = [i for i in plan["items"] if not i["removed"] and i["qty"] > 0]
+        # Only items that count: recipe ingredients of chosen recipes (merged per product).
+        # A day without a choice counts as "niets koken".
+        todo = [i for i in logic.effective_items(plan) if not i.get("removed") and i.get("qty", 0) > 0]
+        open_days = logic.summary(plan)["days_open"] if plan.get("days") else []
         results = []
         for item in todo:
             data: dict[str, Any] = {"config_entry_id": entry_id, "amount": min(item["qty"], 50)}
@@ -473,7 +529,7 @@ class WeekmenuManager:
         plan["approved_at"] = dt_util.utcnow().isoformat()
         plan["results"] = results
         self.changed()
-        summary = {"added": ok, "failed": len(results) - ok, "total": len(results)}
+        summary = {"added": ok, "failed": len(results) - ok, "total": len(results), "days_open": open_days}
         self.hass.bus.async_fire(f"{DOMAIN}_approved", summary)
         return summary
 
@@ -512,7 +568,7 @@ def ws_subscribe(hass, connection, msg):
 
     @callback
     def forward() -> None:
-        connection.send_message(websocket_api.event_message(msg["id"], mgr.data))
+        connection.send_message(websocket_api.event_message(msg["id"], mgr.snapshot()))
 
     connection.subscriptions[msg["id"]] = mgr.add_listener(forward)
     connection.send_result(msg["id"])
@@ -601,6 +657,14 @@ def ws_feedback(hass, connection, msg):
     )
 
 
+@websocket_api.websocket_command(
+    {vol.Required("type"): "weekmenu/choose_day", vol.Required("day"): str, vol.Optional("choice"): vol.Any(str, None)}
+)
+@callback
+def ws_choose_day(hass, connection, msg):
+    _run(connection, msg, lambda: _mgr(hass).choose_day(msg["day"], msg.get("choice")))
+
+
 @websocket_api.websocket_command({vol.Required("type"): "weekmenu/approve"})
 @websocket_api.async_response
 async def ws_approve(hass, connection, msg):
@@ -629,6 +693,7 @@ WS_COMMANDS = (
     ws_answer,
     ws_answer_text,
     ws_feedback,
+    ws_choose_day,
     ws_approve,
     ws_reopen,
 )
@@ -650,7 +715,10 @@ def _register_services(hass: HomeAssistant) -> None:
         _mgr(hass).import_plan(call.data["plan"], call.data.get("standard_items"))
 
     async def get_context(call: ServiceCall) -> ServiceResponse:
-        return copy.deepcopy(_mgr(hass).data)
+        return copy.deepcopy(_mgr(hass).snapshot())
+
+    async def choose_day(call: ServiceCall) -> ServiceResponse:
+        return _mgr(hass).choose_day(call.data["day"], call.data.get("choice"))
 
     async def approve(call: ServiceCall) -> ServiceResponse:
         return await _mgr(hass).approve()
@@ -678,6 +746,15 @@ def _register_services(hass: HomeAssistant) -> None:
     )
     hass.services.async_register(
         DOMAIN, "approve", approve, supports_response=SupportsResponse.OPTIONAL
+    )
+    hass.services.async_register(
+        DOMAIN,
+        "choose_day",
+        choose_day,
+        schema=vol.Schema(
+            {vol.Required("day"): cv.string, vol.Optional("choice"): vol.Any(cv.string, None)}
+        ),
+        supports_response=SupportsResponse.OPTIONAL,
     )
     hass.services.async_register(
         DOMAIN, "add_text", add_text, schema=vol.Schema({vol.Required("text"): cv.string})

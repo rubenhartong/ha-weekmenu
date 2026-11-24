@@ -62,3 +62,18 @@ answer:
       name: Zelf getypt
       selector:
         text:
+choose_day:
+  name: Dag kiezen
+  description: Kiest voor een dag (ma–vr) een recept uit de opties, of "none" (niets koken), of leeg (nog kiezen). Alleen ingrediënten van gekozen recepten gaan mee in de boodschappen.
+  fields:
+    day:
+      name: Dag
+      description: ma, di, wo, do of vr
+      required: true
+      selector:
+        text:
+    choice:
+      name: Keuze
+      description: Recept-id (bijv. r2), "none" voor niets koken, of leeg om de keuze ongedaan te maken.
+      selector:
+        text:
