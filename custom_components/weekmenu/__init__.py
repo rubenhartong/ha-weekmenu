@@ -316,6 +316,111 @@ class WeekmenuManager:
         )
         return res
 
+    # ---- zoeken (voorstellen bij het typen) ------------------------------
+    def _known_products(self) -> list[dict[str, Any]]:
+        """Producten die we al kennen: vaste lijst, dit plan, vraag-opties, geleerd, bijvullen."""
+        d = self.data
+        plan = d.get("plan") or {}
+        out: list[dict[str, Any]] = []
+        out += d.get("standard_items") or []
+        out += plan.get("items") or []
+        for q in plan.get("questions") or []:
+            for o in q.get("options") or []:
+                out += o.get("items") or []
+        for o in (plan.get("michelle") or {}).get("options") or []:
+            out += o.get("items") or []
+        prefs = d.get("preferences") or {}
+        for entries in (prefs.get("learned") or {}).values():
+            for e in entries:
+                out += e.get("items") or []
+        out += [{"name": b.get("name"), "picnic_id": b.get("picnic_id")} for b in prefs.get("bijvullen") or []]
+        return [p for p in out if p.get("name")]
+
+    async def search(self, query: str, limit: int = 10) -> list[dict[str, Any]]:
+        words = [w for w in _slug(query).split("-") if w]
+        if not words:
+            return []
+        seen: set[str] = set()
+        results: list[dict[str, Any]] = []
+
+        def add(p: dict[str, Any], bron: str) -> None:
+            key = p.get("picnic_id") or _slug(p.get("name", ""))
+            if not key or key in seen:
+                return
+            seen.add(key)
+            results.append(
+                {
+                    "name": p.get("name"),
+                    "picnic_id": p.get("picnic_id"),
+                    "image_id": p.get("image_id"),
+                    "unit": p.get("unit"),
+                    "unit_price": p.get("unit_price"),
+                    "bron": bron,
+                }
+            )
+
+        for p in self._known_products():
+            if all(w in _slug(p["name"]) for w in words):
+                add(p, "bekend")
+        for p in await self._picnic_search(query):
+            add(p, "picnic")
+        return results[:limit]
+
+    async def _picnic_search(self, query: str) -> list[dict[str, Any]]:
+        entries = [
+            e for e in self.hass.config_entries.async_entries(PICNIC_DOMAIN) if e.state is ConfigEntryState.LOADED
+        ]
+        api = getattr(getattr(entries[0], "runtime_data", None), "picnic_api_client", None) if entries else None
+        if api is None:
+            return []
+        try:
+            res = await self.hass.async_add_executor_job(api.search, query)
+        except Exception as err:  # noqa: BLE001
+            _LOGGER.debug("Picnic zoeken mislukt: %s", err)
+            return []
+        items = getattr(res, "items", None)
+        if items is None and isinstance(res, list):  # oudere api: [{items: [...]}]
+            items = [i for blok in res for i in (blok.get("items") or []) if isinstance(i, dict)]
+        out = []
+        for it in (items or [])[:12]:
+            g = (lambda k: it.get(k)) if isinstance(it, dict) else (lambda k: getattr(it, k, None))
+            price = g("display_price") or g("price")
+            if not g("name"):
+                continue
+            out.append(
+                {
+                    "name": g("name"),
+                    "picnic_id": str(g("id")) if g("id") else None,
+                    "image_id": g("image_id"),
+                    "unit": g("unit_quantity"),
+                    "unit_price": round(price / 100, 2) if isinstance(price, (int, float)) else None,
+                }
+            )
+        return out
+
+    @callback
+    def add_item(self, raw: dict[str, Any], qty: int = 1, target: str = "week") -> None:
+        item = {**raw, "qty": max(1, int(qty))}
+        if target == "standard":
+            self.standard_add([item])
+        else:
+            self.add_items([item])
+
+    @callback
+    def answer_item(self, qid: str, raw: dict[str, Any]) -> None:
+        q = self._question(qid)
+        self._clear_answer(qid)
+        q["choice"] = "custom"
+        q["custom"] = raw.get("name")
+        it = _norm_item({**raw, "qty": raw.get("qty") or 1}, "snack")
+        self._plan()["items"].append({**it, "source": "snack", "question": qid, "recipe": q.get("title")})
+        self.learn(qid, raw.get("name", ""), [it])
+        self.changed()
+        self.hass.bus.async_fire(
+            f"{DOMAIN}_answer",
+            {"question_id": qid, "who": q.get("who"), "option_id": "custom", "title": raw.get("name")},
+        )
+
     def snapshot(self) -> dict[str, Any]:
         """Stored data plus a computed view (items that count, day summary) for the panel."""
         return {**self.data, "view": logic.view(self.data.get("plan"))}
@@ -665,6 +770,47 @@ def ws_choose_day(hass, connection, msg):
     _run(connection, msg, lambda: _mgr(hass).choose_day(msg["day"], msg.get("choice")))
 
 
+@websocket_api.websocket_command(
+    {vol.Required("type"): "weekmenu/search", vol.Required("query"): str}
+)
+@websocket_api.async_response
+async def ws_search(hass, connection, msg):
+    connection.send_result(msg["id"], {"query": msg["query"], "results": await _mgr(hass).search(msg["query"])})
+
+
+ITEM_SCHEMA = vol.Schema(
+    {
+        vol.Required("name"): str,
+        vol.Optional("picnic_id"): vol.Any(str, None),
+        vol.Optional("image_id"): vol.Any(str, None),
+        vol.Optional("unit"): vol.Any(str, None),
+        vol.Optional("unit_price"): vol.Any(float, int, None),
+    },
+    extra=vol.REMOVE_EXTRA,
+)
+
+
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): "weekmenu/add_item",
+        vol.Required("item"): ITEM_SCHEMA,
+        vol.Optional("qty", default=1): int,
+        vol.Optional("target", default="week"): vol.In(["week", "standard"]),
+    }
+)
+@callback
+def ws_add_item(hass, connection, msg):
+    _run(connection, msg, lambda: _mgr(hass).add_item(msg["item"], msg["qty"], msg["target"]))
+
+
+@websocket_api.websocket_command(
+    {vol.Required("type"): "weekmenu/answer_item", vol.Required("question_id"): str, vol.Required("item"): ITEM_SCHEMA}
+)
+@callback
+def ws_answer_item(hass, connection, msg):
+    _run(connection, msg, lambda: _mgr(hass).answer_item(msg["question_id"], msg["item"]))
+
+
 @websocket_api.websocket_command({vol.Required("type"): "weekmenu/approve"})
 @websocket_api.async_response
 async def ws_approve(hass, connection, msg):
@@ -694,6 +840,9 @@ WS_COMMANDS = (
     ws_answer_text,
     ws_feedback,
     ws_choose_day,
+    ws_search,
+    ws_add_item,
+    ws_answer_item,
     ws_approve,
     ws_reopen,
 )

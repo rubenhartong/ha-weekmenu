@@ -119,3 +119,45 @@ def test_oud_plan_zonder_days():
     assert all(r["selected"] for r in m.data["plan"]["recipes"])
     res = asyncio.run(m.approve())
     assert res["total"] == 5 and res["days_open"] == []
+
+
+def test_zoeken_bekend_en_picnic_en_toevoegen():
+    hass = FakeHass()
+
+    class Item:
+        def __init__(self, i, n, p):
+            self.id, self.name, self.display_price, self.unit_quantity, self.image_id = i, n, p, "500 g", "img"
+
+    class Api:
+        def search(self, q):
+            return types.SimpleNamespace(items=[Item("s99", "Picnic rijstwafels naturel", 129), Item("s1", "Melk dubbel", 100)])
+
+    entry = types.SimpleNamespace(state="loaded", entry_id="pic1", runtime_data=types.SimpleNamespace(picnic_api_client=Api()))
+    hass.config_entries = types.SimpleNamespace(async_entries=lambda d: [entry])
+
+    async def executor(fn, *a):
+        return fn(*a)
+    hass.async_add_executor_job = executor
+
+    m = weekmenu.WeekmenuManager(hass)
+    m.import_plan(PLAN, None)
+    res = asyncio.run(m.search("melk"))
+    assert res[0]["bron"] == "bekend" and res[0]["picnic_id"] == "s1"
+    assert [r["picnic_id"] for r in res].count("s1") == 1  # niet dubbel
+    res = asyncio.run(m.search("rijstwafels"))
+    assert res[0] == {"name": "Picnic rijstwafels naturel", "picnic_id": "s99", "image_id": "img", "unit": "500 g", "unit_price": 1.29, "bron": "picnic"}
+
+    m.add_item(res[0], 2)
+    added = next(i for i in m.data["plan"]["items"] if i["picnic_id"] == "s99")
+    assert added["qty"] == 2 and added["unit_price"] == 1.29
+    m.add_item(res[0], 1, "standard")
+    assert any(i["picnic_id"] == "s99" for i in m.data["standard_items"])
+
+
+def test_zoeken_zonder_picnic():
+    hass = FakeHass()
+    hass.config_entries = types.SimpleNamespace(async_entries=lambda d: [])
+    m = weekmenu.WeekmenuManager(hass)
+    m.import_plan(PLAN, None)
+    assert [r["name"] for r in asyncio.run(m.search("zal"))] == ["Zalm"]
+    assert asyncio.run(m.search(" ")) == []

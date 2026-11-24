@@ -113,7 +113,7 @@ h2 { font-size: 17px; margin: 24px 4px 10px; font-weight: 650; }
 .thumb img { width: 100%; height: 100%; object-fit: contain; }
 .info { flex: 1; min-width: 0; }
 .info .n { font-weight: 600; font-size: 15px; line-height: 1.25; overflow: hidden; text-overflow: ellipsis; display:-webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-.info .s { font-size: 12.5px; color: var(--tx2); margin-top: 2px; }
+.info .s { font-size: 12.5px; color: var(--tx2); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .info .promo { color: var(--acc); font-weight: 600; }
 .step { display:flex; align-items:center; background: var(--bg); border-radius: 99px; }
 .step button { width: 34px; height: 34px; border-radius: 99px; font-size: 18px; font-weight: 600; color: var(--acc); }
@@ -226,6 +226,18 @@ h2 { font-size: 17px; margin: 24px 4px 10px; font-weight: 650; }
 .sdots i.ch { background: var(--acc); }
 .sdots i.ch.on { background: var(--acc); }
 .warnline { color: var(--warn); font-weight: 600; font-size: 13.5px; }
+.weekgrid { display:grid; gap: 22px; align-items: start; }
+.weekgrid > div { min-width: 0; }
+.sugg { background: var(--card); border-radius: 14px; box-shadow: 0 6px 24px rgba(0,0,0,.14); overflow: hidden; margin: -2px 0 10px; border: 1px solid var(--line); }
+.sugg button { width: 100%; display:flex; align-items:center; gap: 12px; padding: 9px 12px; text-align:left; border-top: 1px solid var(--line); }
+.sugg button:first-child { border-top: 0; }
+.sugg .thumb { width: 40px; height: 40px; flex: 0 0 40px; font-size: 18px; }
+.sugg .sn { flex:1; min-width:0; }
+.sugg .sn b { display:block; font-weight: 600; font-size: 14.5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sugg .sn span { font-size: 12.5px; color: var(--tx2); }
+.sugg .plus { width: 32px; height: 32px; border-radius: 99px; background: var(--acc-soft); color: var(--acc); display:flex; align-items:center; justify-content:center; font-size: 20px; font-weight: 600; flex: 0 0 32px; }
+.sugg .hint { padding: 10px 12px; font-size: 13px; color: var(--tx2); }
+.statusline { font-size: 13px; color: var(--tx2); }
 .sheetbg { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 15; }
 .sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 16; max-height: 86vh; overflow-y: auto; background: var(--card); border-radius: 20px 20px 0 0; padding: 10px 18px max(18px, env(safe-area-inset-bottom)); box-shadow: 0 -8px 30px rgba(0,0,0,.25); max-width: 640px; margin: 0 auto; }
 .sheet .grab { width: 40px; height: 5px; border-radius: 99px; background: var(--line); margin: 0 auto 12px; }
@@ -237,7 +249,7 @@ h2 { font-size: 17px; margin: 24px 4px 10px; font-weight: 650; }
 .sheet .acts .btn { flex: 1; white-space: nowrap; }
 .sheet .acts .btn:last-child { flex: 2; }
 @media (min-width: 900px) {
-  .weekgrid { display:grid; grid-template-columns: 1.1fr 1fr; gap: 20px; align-items: start; }
+  .weekgrid { grid-template-columns: 1.1fr 1fr; gap: 24px; }
   .weekgrid h2:first-child { margin-top: 0; }
   .cook .stage.split { grid-template-columns: minmax(260px, 32%) 1fr; }
   .cook .stage.split .side { display:block; }
@@ -335,6 +347,35 @@ class WeekmenuPanel extends HTMLElement {
     return i.image_id
       ? `<div class="thumb"><img loading="lazy" src="${IMG(i.image_id)}" alt="" onerror="this.replaceWith(document.createTextNode('🛒'))"></div>`
       : `<div class="thumb">${esc(i.emoji || "🛒")}</div>`;
+  }
+
+  _suggList(field) {
+    const sg = this.sugg;
+    if (!sg || sg.field !== field) return "";
+    if (sg.loading && !sg.items.length) return `<div class="sugg"><div class="hint">Zoeken…</div></div>`;
+    if (!sg.items.length) return `<div class="sugg"><div class="hint">Niets gevonden. Druk op ＋ om "${esc(sg.q)}" toch toe te voegen.</div></div>`;
+    return `<div class="sugg">${sg.items.map((it, k) => `<button data-a="pick" data-f="${esc(field)}" data-i="${k}">
+      ${this._thumb(it)}<span class="sn"><b>${esc(it.name)}</b><span>${[it.unit, it.unit_price != null ? eur(it.unit_price) : ""].filter(Boolean).map(esc).join(" · ")}</span></span>
+      <span class="plus">＋</span></button>`).join("")}</div>`;
+  }
+
+  _onSearchInput(field, value) {
+    clearTimeout(this._sugT);
+    const q = (value || "").trim();
+    if (q.length < 2) { if (this.sugg) { this.sugg = null; this._render(); } return; }
+    this._sugT = setTimeout(async () => {
+      this.sugg = { field, q, items: this.sugg?.field === field ? this.sugg.items : [], loading: true };
+      this._render();
+      try {
+        const r = await this._hass.connection.sendMessagePromise({ type: "weekmenu/search", query: q });
+        const cur = this.shadowRoot.getElementById(field)?.value.trim();
+        if (cur !== q) return; // al verder getypt
+        this.sugg = { field, q, items: r.results || [], loading: false };
+      } catch (_) {
+        this.sugg = null;
+      }
+      this._render();
+    }, 280);
   }
 
   _toast(text, undo) {
@@ -447,7 +488,7 @@ class WeekmenuPanel extends HTMLElement {
 
   _openDaysWarn() {
     const n = (this._sum()?.days_open || []).length;
-    return n ? `<div class="warnline">⚠️ ${n} ${n === 1 ? "dag" : "dagen"} nog niet gekozen (telt als niets koken)</div>` : "";
+    return n ? `<div class="warnline">${n} ${n === 1 ? "dag" : "dagen"} nog open</div>` : "";
   }
 
   _weekDaysView(p, st, t, fails) {
@@ -456,24 +497,22 @@ class WeekmenuPanel extends HTMLElement {
       <div class="weekgrid">
         <div>
           <div class="wkhead"><h2>Deze week</h2>
-            <div class="meta"><b>${sm.days_chosen || 0} van ${sm.days_total || this.days.length}</b> dagen gekozen${sm.recipe_price ? `<br>ca. ${eur(sm.recipe_price)} aan recepten` : ""}</div></div>
+            <div class="meta"><b>${sm.days_chosen || 0}/${sm.days_total || this.days.length}</b> gekozen${sm.recipe_price ? ` · ca. ${eur(sm.recipe_price)}` : ""}</div></div>
           <div class="prog">${this.days.map((d) => `<i class="${d.choice === "none" ? "none" : d.choice ? "on" : ""}"></i>`).join("")}</div>
           <div class="days">${this.days.map((d) => this._dayRow(d)).join("")}</div>
         </div>
         <div>
           <div class="card status">
-            <div class="row"><span class="pill ${p.status === "approved" ? "" : "warn"}">${st.icon} ${st.label}</span>
-              ${p.delivery ? `<span class="muted small">Bezorging ${esc(p.delivery)}</span>` : ""}</div>
             <div class="row"><span class="big">${eur(t.sum)}</span>
               <span class="muted">${t.count} producten</span>
               ${t.save > 0 ? `<span class="save">${eur(t.save)} voordeel</span>` : ""}</div>
-            ${p.advice ? `<div class="small">💡 ${esc(p.advice)}</div>` : ""}
             ${p.status === "approved"
-              ? `<div class="small">Kies het bezorgmoment en reken af in de Picnic-app.${fails ? ` <span class="res-bad">${fails} product${fails > 1 ? "en" : ""} niet gelukt.</span>` : ""}</div>
+              ? `<div class="small">🧺 In je Picnic-mandje. Kies het bezorgmoment in de Picnic-app.${fails ? ` <span class="res-bad">${fails} niet gelukt.</span>` : ""}</div>
                  <button class="btn ghost" data-a="reopen">Toch nog iets aanpassen</button>`
               : `${this._openDaysWarn()}
-                 <div class="row"><button class="btn" data-a="tab" data-v="list">Bekijk lijst</button>${this._approveBtn()}</div>
-                 ${p.order_deadline ? `<div class="muted small">Bestellen kan tot ${esc(p.order_deadline)}</div>` : ""}`}
+                 <div class="row"><button class="btn ghost" data-a="tab" data-v="list">Lijst</button>${this._approveBtn()}</div>`}
+            ${[p.delivery ? `Bezorging ${esc(p.delivery)}` : "", p.status !== "approved" && p.order_deadline ? `bestellen tot ${esc(p.order_deadline)}` : ""].filter(Boolean).length
+              ? `<div class="statusline">${[p.delivery ? `Bezorging ${esc(p.delivery)}` : "", p.status !== "approved" && p.order_deadline ? `bestellen tot ${esc(p.order_deadline)}` : ""].filter(Boolean).join(" · ")}</div>` : ""}
           </div>
           ${this._michelleCard()}
           ${this._questionsCard()}
@@ -491,8 +530,8 @@ class WeekmenuPanel extends HTMLElement {
       ? `<div class="dmain"><span>${esc(r.emoji || "🍽️")}</span><span class="tt">${esc(r.title)}</span></div>`
       : d.choice === "none"
         ? `<div class="dmain none"><span class="tt">Niets koken</span></div>`
-        : `<div class="dmain open"><span class="tt">Nog kiezen · ${(d.options || []).length} opties</span></div>`;
-    const slot = [d.date === today ? "Vandaag" : "", d.slot].filter(Boolean).join(" · ");
+        : `<div class="dmain open"><span class="tt">Nog kiezen</span></div>`;
+    const slot = d.slot || "";
     const chev = `<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>`;
     const head = `<button class="dhead" data-a="day" data-v="${esc(d.day)}" aria-expanded="${open}">
       <div class="dtile"><small>${esc(d.day)}</small><b>${dayNum ? Number(dayNum) : ""}</b></div>
@@ -604,7 +643,7 @@ class WeekmenuPanel extends HTMLElement {
           <button class="chip ${q.choice === o.id ? "on" : ""}" data-a="answer" data-q="${esc(q.id)}" data-v="${esc(o.id)}">${esc(o.emoji || "")} ${esc(o.title)}${o.learned ? "" : o.new ? `<span class="new">nieuw</span>` : ""}</button>`).join("")}
           ${q.choice === "custom" ? `<button class="chip on" data-a="answer" data-q="${esc(q.id)}" data-v="">✍️ ${esc(q.custom)}</button>` : ""}
         </div>
-        <div class="own"><input id="own-${esc(q.id)}" placeholder="Zelf zoeken, bijv. rijstwafels" enterkeyhint="done" autocomplete="off"><button data-a="own" data-q="${esc(q.id)}">Kies</button></div>
+        <div class="own"><input id="own-${esc(q.id)}" placeholder="Iets anders zoeken" enterkeyhint="done" autocomplete="off"><button data-a="own" data-q="${esc(q.id)}">Kies</button></div>${this._suggList(`own-${q.id}`)}
       </div>`).join("")}</div>`;
   }
 
@@ -618,8 +657,7 @@ class WeekmenuPanel extends HTMLElement {
   _footer() {
     if (!this.data || this.ui.tab !== "list" || this.ui.seg !== "week" || !this.plan || this.plan.status === "approved") return "";
     const t = this._totals();
-    const open = (this._sum()?.days_open || []).length;
-    return `<div class="footer"><div class="sum"><b>${eur(t.sum)}</b><br><span class="muted small">${t.count} producten${t.save > 0 ? ` · <span class="save">${eur(t.save)} voordeel</span>` : ""}${open ? ` · <span class="warnline">${open} ${open === 1 ? "dag" : "dagen"} nog niet gekozen</span>` : ""}</span></div>${this._approveBtn()}</div>`;
+    return `<div class="footer"><div class="sum"><b>${eur(t.sum)}</b><br><span class="muted small">${t.count} producten${t.save > 0 ? ` · <span class="save">${eur(t.save)} voordeel</span>` : ""}</span></div>${this._approveBtn()}</div>`;
   }
 
   _listView() {
@@ -642,7 +680,7 @@ class WeekmenuPanel extends HTMLElement {
     const removed = this._items().filter((i) => i.removed || i.qty === 0);
     return seg +
       (locked ? `<div class="card small">🧺 Deze lijst staat in je Picnic-mandje. <button style="color:var(--acc);font-weight:600" data-a="reopen">Aanpassen</button></div>`
-        : `<div class="add"><input id="addweek" placeholder="Product toevoegen, bijv. 2x komkommer" enterkeyhint="done" autocomplete="off"><button class="btn" data-a="addweek">＋</button></div>`) +
+        : `<div class="add"><input id="addweek" placeholder="Zoek een product" enterkeyhint="done" autocomplete="off"><button class="btn" data-a="addweek">＋</button></div>${this._suggList("addweek")}`) +
       groups +
       (other.length ? `<div class="gh"><span>Overig</span></div><div class="group">${other.map((i) => this._row(i, locked)).join("")}</div>` : "") +
       (removed.length && !locked ? `<details class="removed"><summary>Weggehaald (${removed.length})</summary><div class="group">${removed
@@ -663,7 +701,7 @@ class WeekmenuPanel extends HTMLElement {
   _stdView() {
     const std = this.data.standard_items || [];
     return `<div class="muted small" style="margin:0 6px 10px">Dit komt elke week standaard op je lijst.</div>
-      <div class="add"><input id="addstd" placeholder="Vast product, bijv. 2x melk" enterkeyhint="done" autocomplete="off"><button class="btn" data-a="addstd">＋</button></div>
+      <div class="add"><input id="addstd" placeholder="Zoek een vast product" enterkeyhint="done" autocomplete="off"><button class="btn" data-a="addstd">＋</button></div>${this._suggList("addstd")}
       ${std.length ? `<div class="group">${std.map((i) => `<div class="rowwrap"><div class="item" data-std="${esc(i.key)}">
         ${this._thumb(i)}<div class="info"><div class="n">${esc(i.name)}</div>${i.unit ? `<div class="s">${esc(i.unit)}</div>` : ""}</div>
         <div class="step"><button data-a="sminus" data-v="${esc(i.key)}">−</button><span>${i.qty}</span><button data-a="splus" data-v="${esc(i.key)}">+</button></div>
@@ -792,7 +830,9 @@ class WeekmenuPanel extends HTMLElement {
     ["addweek", "addstd"].forEach((id) => {
       const inp = root.getElementById(id);
       inp?.addEventListener("keydown", (e) => { if (e.key === "Enter") this._act(id); });
+      inp?.addEventListener("input", () => this._onSearchInput(id, inp.value));
     });
+    root.querySelectorAll('input[id^="own-"]').forEach((inp) => inp.addEventListener("input", () => this._onSearchInput(inp.id, inp.value)));
     root.querySelectorAll('input[id^="own-"]').forEach((inp) =>
       inp.addEventListener("keydown", (e) => { if (e.key === "Enter") this._act("own", null, { dataset: { q: inp.id.slice(4) } }); }));
     root.querySelectorAll(".strip").forEach((st) => st.addEventListener("scroll", () => this._stripDots(st), { passive: true }));
@@ -871,10 +911,27 @@ class WeekmenuPanel extends HTMLElement {
         if (u) await this._ws(u);
         break;
       }
+      case "pick": {
+        const f = el?.dataset.f;
+        const it = this.sugg?.items?.[Number(el?.dataset.i)];
+        if (!f || !it) return;
+        const inp = this.shadowRoot.getElementById(f);
+        if (inp) inp.value = "";
+        this.sugg = null;
+        const item = { name: it.name, picnic_id: it.picnic_id || null, image_id: it.image_id || null, unit: it.unit || null, unit_price: it.unit_price ?? null };
+        if (f.startsWith("own-")) {
+          await this._ws({ type: "weekmenu/answer_item", question_id: f.slice(4), item });
+          this._toast(`${it.name} gekozen`);
+        } else {
+          await this._ws({ type: "weekmenu/add_item", item, qty: 1, target: f === "addstd" ? "standard" : "week" });
+          this._toast(`${it.name} toegevoegd`);
+        }
+        return;
+      }
       case "addweek": case "addstd": {
         const inp = this.shadowRoot.getElementById(a);
         const text = inp?.value.trim(); if (!text) return;
-        inp.value = "";
+        inp.value = ""; this.sugg = null;
         await this._ws({ type: a === "addweek" ? "weekmenu/add_text" : "weekmenu/standard_add", text });
         this._toast("Toegevoegd");
         return;
@@ -920,7 +977,7 @@ class WeekmenuPanel extends HTMLElement {
         const qid = el?.dataset.q;
         const inp = this.shadowRoot.getElementById(`own-${qid}`);
         const text = inp?.value.trim(); if (!text) return;
-        inp.value = "";
+        inp.value = ""; this.sugg = null;
         await this._ws({ type: "weekmenu/answer_text", question_id: qid, text });
         this._toast("Genoteerd, die bied ik volgende keer ook aan");
         return;

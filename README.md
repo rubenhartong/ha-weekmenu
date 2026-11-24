@@ -21,6 +21,7 @@ Boodschappen (Picnic), recepten en kookmodus in één paneel in de HA-zijbalk.
 | `weekmenu.approve` | Alles in het Picnic-mandje zetten |
 | `weekmenu.add_text` | Producten toevoegen: `"hagelslag, 2x komkommer"` |
 | `weekmenu.michelle_choose` | Michelles meeneem-keuze |
+| (paneel) zoeken | Voorstellen bij typen: bekende producten + Picnic-zoekresultaten (websocket `weekmenu/search`, `weekmenu/add_item`, `weekmenu/answer_item`) |
 | `weekmenu.choose_day` | Keuze per dag: `{day: "ma", choice: "r2" \| "none" \| null}` |
 | `weekmenu.set_preferences` | Voorkeuren bijwerken |
 
