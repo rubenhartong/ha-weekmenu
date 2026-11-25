@@ -262,6 +262,17 @@ h2 { font-size: 17px; margin: 24px 4px 10px; font-weight: 650; }
 .sheet .acts { display:flex; gap: 10px; margin-top: 20px; }
 .sheet .acts .btn { flex: 1; white-space: nowrap; }
 .sheet .acts .btn:last-child { flex: 2; }
+.pricebtn { width: 100%; margin: 2px 0 12px; }
+.pcheck { display:grid; gap: 8px; margin-top: 12px; }
+.prow { display:flex; gap: 12px; align-items:flex-start; text-align:left; width:100%; padding: 12px; border-radius: 14px; background: var(--bg); border: 1.5px solid transparent; }
+.prow.on { border-color: var(--acc); background: var(--acc-soft); }
+.prow .box { flex: none; width: 24px; height: 24px; border-radius: 7px; border: 2px solid var(--line); display:grid; place-items:center; font-size: 15px; color:#fff; margin-top: 2px; }
+.prow.on .box { background: var(--acc); border-color: var(--acc); }
+.prow .pt { flex: 1; min-width: 0; font-size: 14px; line-height: 1.4; }
+.prow .pt .was { color: var(--tx2); text-decoration: line-through; font-size: 13px; }
+.prow .pt .nu { font-weight: 650; }
+.prow .pt .why { color: var(--tx2); font-size: 12.5px; }
+.prow .ps { flex: none; font-weight: 700; color: var(--ok, #2e9d5b); white-space: nowrap; }
 @media (min-width: 900px) {
   .weekgrid { grid-template-columns: 1.1fr 1fr; gap: 24px; }
   .weekgrid h2:first-child { margin-top: 0; }
@@ -424,6 +435,7 @@ class WeekmenuPanel extends HTMLElement {
         <main><div class="wrap">${this._body()}</div></main>
         ${this._footer()}
         ${this.ui.prep && !this.ui.cook ? this._prepSheet() : ""}
+        ${this.ui.price?.result ? this._priceSheet() : ""}
         ${this.ui.cook ? this._cookView() : ""}
         ${this._toastData ? `<div class="toast"><span>${esc(this._toastData.text)}</span>${this._toastData.undo ? `<button data-a="undo">Ongedaan</button>` : ""}</div>` : ""}
       </div>`;
@@ -614,6 +626,32 @@ class WeekmenuPanel extends HTMLElement {
       </div>`;
   }
 
+  _priceSheet() {
+    const { result: r, sel } = this.ui.price;
+    const list = r.suggestions || [];
+    const chosen = list.filter((x) => sel.has(x.key));
+    const save = chosen.reduce((t, x) => t + x.alt.saving, 0);
+    const body = list.length
+      ? `<div class="muted small" style="margin-top:6px">${r.checked} producten vergeleken. Vink aan wat je wilt vervangen.</div>
+        <div class="pcheck">${list.map((x) => `
+          <button class="prow ${sel.has(x.key) ? "on" : ""}" data-a="ptoggle" data-v="${esc(x.key)}">
+            <span class="box">${sel.has(x.key) ? "✓" : ""}</span>
+            <span class="pt"><div class="was">${x.current.qty}× ${esc(x.current.name)}${x.current.unit && !/\d/.test(x.current.name) ? ` (${esc(x.current.unit)})` : ""} · ${eur(x.current.total)}</div>
+              <div class="nu">${x.alt.qty}× ${esc(x.alt.name)}${x.alt.unit && !/\d/.test(x.alt.name) ? ` (${esc(x.alt.unit)})` : ""} · ${eur(x.alt.total)}</div>
+              <div class="why">${esc(x.alt.reason)}${x.current.recipe ? ` · ${esc(x.current.recipe)}` : ""}</div></span>
+            <span class="ps">−${eur(x.alt.saving)}</span>
+          </button>`).join("")}</div>`
+      : `<div class="empty" style="padding:24px 0"><div class="e">👍</div><p>${r.checked} producten vergeleken.<br>Je hebt al de goedkoopste keuze.</p></div>`;
+    return `<div class="sheetbg" data-a="pclose"></div>
+      <div class="sheet" role="dialog" aria-label="Prijscheck">
+        <div class="grab"></div>
+        <h3>Prijscheck</h3>
+        ${body}
+        <div class="acts"><button class="btn ghost" data-a="pclose">${list.length ? "Annuleren" : "Sluiten"}</button>
+          ${list.length ? `<button class="btn" data-a="papply" ${chosen.length ? "" : "disabled"}>${chosen.length ? `Vervang ${chosen.length} · −${eur(save)}` : "Niets gekozen"}</button>` : ""}</div>
+      </div>`;
+  }
+
   _noneCard(d) {
     const on = d.choice === "none";
     return `<div class="ocard nocook ${on ? "on" : ""}">
@@ -697,7 +735,8 @@ class WeekmenuPanel extends HTMLElement {
     const removed = this._items().filter((i) => i.removed || i.qty === 0);
     return seg +
       (locked ? `<div class="card small">🧺 Deze lijst staat in je Picnic-mandje. <button style="color:var(--acc);font-weight:600" data-a="reopen">Aanpassen</button></div>`
-        : `<div class="add"><input id="addweek" placeholder="Zoek een product" enterkeyhint="done" autocomplete="off"><button class="btn" data-a="addweek">＋</button></div>${this._suggList("addweek")}`) +
+        : `<div class="add"><input id="addweek" placeholder="Zoek een product" enterkeyhint="done" autocomplete="off"><button class="btn" data-a="addweek">＋</button></div>${this._suggList("addweek")}
+        <button class="btn ghost pricebtn" data-a="pcheck" ${this.ui.price?.loading ? "disabled" : ""}>${this.ui.price?.loading ? "Picnic doorzoeken…" : "💶 Prijzen checken"}</button>`) +
       groups +
       (other.length ? `<div class="gh"><span>Overig</span></div><div class="group">${other.map((i) => this._row(i, locked)).join("")}</div>` : "") +
       (removed.length && !locked ? `<details class="removed"><summary>Weggehaald (${removed.length})</summary><div class="group">${removed
@@ -980,6 +1019,29 @@ class WeekmenuPanel extends HTMLElement {
         break;
       }
       case "reopen": return this._ws({ type: "weekmenu/reopen" });
+      case "pcheck": {
+        if (ui.price?.loading) return;
+        ui.price = { loading: true }; this._render();
+        try {
+          const r = await this._ws({ type: "weekmenu/price_check" });
+          ui.price = { result: r, sel: new Set((r.suggestions || []).map((x) => x.key)) };
+        } catch (e) { ui.price = null; }
+        break;
+      }
+      case "ptoggle": {
+        const sel = ui.price?.sel; if (!sel) return;
+        sel.has(v) ? sel.delete(v) : sel.add(v);
+        break;
+      }
+      case "pclose": ui.price = null; break;
+      case "papply": {
+        const p = ui.price; if (!p?.result) return;
+        const changes = p.result.suggestions.filter((x) => p.sel.has(x.key)).map((x) => ({ key: x.key, alt: x.alt }));
+        ui.price = null; this._render();
+        const r = await this._ws({ type: "weekmenu/apply_prices", changes }).catch(() => null);
+        if (r) this._toast(`${r.applied} ${r.applied === 1 ? "product" : "producten"} vervangen · ${eur(r.saving)} goedkoper`);
+        break;
+      }
       case "mchoose": {
         const m = this.plan?.michelle;
         return this._ws({ type: "weekmenu/michelle_choose", option_id: m?.choice === v ? null : v });

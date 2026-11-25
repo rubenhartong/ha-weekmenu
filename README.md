@@ -91,6 +91,11 @@ plan:
   (`replaces` = hoeveel kleine verpakkingen één grote vervangt). Is het product nodig in meerdere
   gekozen recepten en is de grote verpakking dan goedkoper, dan toont de lijst (en het mandje)
   de grote verpakking met de besparing als 💡-notitie. +/− op die regel telt in grote pakken.
+- Prijscheck: knop *💶 Prijzen checken* in Lijst → Deze week. Zoekt per product op Picnic naar een
+  gelijkwaardig product dat goedkoper uitvalt voor dezelfde hoeveelheid (prijs per kg/liter/stuk,
+  ook een grotere verpakking). Je vinkt zelf aan wat je doorvoert. Websocket: `weekmenu/price_check`
+  en `weekmenu/apply_prices` (`changes: [{key, alt}]`). Bij recept-ingrediënten wordt de vervanging
+  onthouden (`plan.swaps`), zodat de hoeveelheid de dagkeuzes blijft volgen.
 - Kookmodus toont alleen gekozen recepten, op volgorde van de dagen.
 - Het paneel en `get_context` krijgen naast de opgeslagen gegevens een berekend `view`:
   `items` (wat meetelt) en `summary` (`days_chosen`, `days_total`, `days_open`, `recipe_price`,

@@ -8,6 +8,7 @@ deterministic code here and in the panel.
 
 from __future__ import annotations
 
+import asyncio
 import copy
 import hashlib
 import logging
@@ -35,7 +36,7 @@ from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.storage import Store
 from homeassistant.util import dt as dt_util
 
-from . import logic
+from . import logic, prices
 from .const import (
     DOMAIN,
     PANEL_URL,
@@ -369,11 +370,14 @@ class WeekmenuManager:
             add(p, "picnic")
         return results[:limit]
 
-    async def _picnic_search(self, query: str) -> list[dict[str, Any]]:
+    def _picnic_api(self):
         entries = [
             e for e in self.hass.config_entries.async_entries(PICNIC_DOMAIN) if e.state is ConfigEntryState.LOADED
         ]
-        api = getattr(getattr(entries[0], "runtime_data", None), "picnic_api_client", None) if entries else None
+        return getattr(getattr(entries[0], "runtime_data", None), "picnic_api_client", None) if entries else None
+
+    async def _picnic_search(self, query: str, limit: int = 12) -> list[dict[str, Any]]:
+        api = self._picnic_api()
         if api is None:
             return []
         try:
@@ -385,7 +389,7 @@ class WeekmenuManager:
         if items is None and isinstance(res, list):  # oudere api: [{items: [...]}]
             items = [i for blok in res for i in (blok.get("items") or []) if isinstance(i, dict)]
         out = []
-        for it in (items or [])[:12]:
+        for it in (items or [])[:limit]:
             g = (lambda k: it.get(k)) if isinstance(it, dict) else (lambda k: getattr(it, k, None))
             price = g("display_price") or g("price")
             if not g("name"):
@@ -400,6 +404,80 @@ class WeekmenuManager:
                 }
             )
         return out
+
+    # ---- price check -------------------------------------------------------
+    async def price_check(self) -> dict[str, Any]:
+        """Search Picnic for cheaper equivalent products for everything on this week's list."""
+        plan = self._plan()
+        if plan.get("status") == "approved":
+            raise HomeAssistantError("Deze lijst staat al in je mandje. Tik eerst op Aanpassen.")
+        if self._picnic_api() is None:
+            raise HomeAssistantError("De Picnic-koppeling in Home Assistant is niet beschikbaar.")
+        rows = [
+            r for r in logic.effective_items(plan)
+            if not r.get("removed") and r.get("qty", 0) > 0 and r.get("picnic_id") and r.get("unit_price") is not None
+        ]
+        sem = asyncio.Semaphore(3)
+
+        async def one(row: dict[str, Any]) -> dict[str, Any] | None:
+            async with sem:
+                cands = await self._picnic_search(prices.search_query(row["name"]), limit=20)
+            alt = prices.best_alternative(row, cands)
+            if not alt:
+                return None
+            return {
+                "key": row["key"],
+                "current": {
+                    "name": row["name"],
+                    "qty": row["qty"],
+                    "unit_price": row["unit_price"],
+                    "unit": alt.pop("current_unit", None),
+                    "total": alt.pop("current_total"),
+                    "image_id": row.get("image_id"),
+                    "recipe": row.get("recipe"),
+                },
+                "alt": alt,
+            }
+
+        found = [s for s in await asyncio.gather(*(one(r) for r in rows)) if s]
+        found.sort(key=lambda s: -s["alt"]["saving"])
+        return {
+            "checked": len(rows),
+            "suggestions": found,
+            "total_saving": round(sum(s["alt"]["saving"] for s in found), 2),
+        }
+
+    @callback
+    def apply_prices(self, changes: list[dict[str, Any]]) -> dict[str, Any]:
+        """Apply the price-check suggestions the user ticked."""
+        plan = self._plan()
+        shown = {r["key"]: r for r in logic.effective_items(plan)}
+        applied, saving = 0, 0.0
+        for ch in changes:
+            row, alt = shown.get(ch.get("key")), ch.get("alt") or {}
+            if not row or not alt.get("picnic_id") or alt.get("unit_price") is None:
+                continue
+            new = {
+                "name": str(alt["name"]),
+                "picnic_id": str(alt["picnic_id"]),
+                "image_id": alt.get("image_id"),
+                "unit": alt.get("unit"),
+                "unit_price": float(alt["unit_price"]),
+            }
+            if row.get("members"):
+                # merged recipe row: remember the swap; amounts keep following the day choices
+                orig = float(alt.get("from_size") or 0) / float(row.get("qty_factor") or 1)
+                if orig <= 0 or not alt.get("to_size"):
+                    continue
+                plan.setdefault("swaps", {})[row["key"]] = {**new, "from_size": orig, "to_size": float(alt["to_size"])}
+            else:
+                item = self._find(row["key"])
+                item.update({**new, "qty": max(1, int(alt.get("qty") or 1)), "promo": None, "note": f"prijscheck: was {item['name']}"})
+            applied += 1
+            saving += float(alt.get("saving") or 0)
+        if applied:
+            self.changed()
+        return {"applied": applied, "saving": round(saving, 2)}
 
     @callback
     def add_item(self, raw: dict[str, Any], qty: int = 1, target: str = "week") -> None:
@@ -662,11 +740,11 @@ def _mgr(hass: HomeAssistant) -> WeekmenuManager:
 
 def _run(connection, msg, fn: Callable[[], Any]) -> None:
     try:
-        fn()
+        res = fn()
     except HomeAssistantError as err:
         connection.send_error(msg["id"], "weekmenu_error", str(err))
         return
-    connection.send_result(msg["id"])
+    connection.send_result(msg["id"], res if isinstance(res, dict) else None)
 
 
 @websocket_api.websocket_command({vol.Required("type"): "weekmenu/subscribe"})
@@ -781,6 +859,25 @@ async def ws_search(hass, connection, msg):
     connection.send_result(msg["id"], {"query": msg["query"], "results": await _mgr(hass).search(msg["query"])})
 
 
+@websocket_api.websocket_command({vol.Required("type"): "weekmenu/price_check"})
+@websocket_api.async_response
+async def ws_price_check(hass, connection, msg):
+    try:
+        result = await _mgr(hass).price_check()
+    except HomeAssistantError as err:
+        connection.send_error(msg["id"], "weekmenu_error", str(err))
+        return
+    connection.send_result(msg["id"], result)
+
+
+@websocket_api.websocket_command(
+    {vol.Required("type"): "weekmenu/apply_prices", vol.Required("changes"): [dict]}
+)
+@callback
+def ws_apply_prices(hass, connection, msg):
+    _run(connection, msg, lambda: _mgr(hass).apply_prices(msg["changes"]))
+
+
 ITEM_SCHEMA = vol.Schema(
     {
         vol.Required("name"): str,
@@ -844,6 +941,8 @@ WS_COMMANDS = (
     ws_feedback,
     ws_choose_day,
     ws_search,
+    ws_price_check,
+    ws_apply_prices,
     ws_add_item,
     ws_answer_item,
     ws_approve,

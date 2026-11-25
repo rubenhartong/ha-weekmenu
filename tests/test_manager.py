@@ -161,3 +161,47 @@ def test_zoeken_zonder_picnic():
     m.import_plan(PLAN, None)
     assert [r["name"] for r in asyncio.run(m.search("zal"))] == ["Zalm"]
     assert asyncio.run(m.search(" ")) == []
+
+
+def test_prijscheck_en_doorvoeren():
+    hass = FakeHass()
+
+    class Item:
+        def __init__(self, i, n, p, u):
+            self.id, self.name, self.display_price, self.unit_quantity, self.image_id = i, n, p, u, None
+
+    catalogus = {
+        "melk": [Item("s1", "Melk", 119, "1 liter"), Item("s2", "Picnic halfvolle melk", 99, "1 liter")],
+        "zalm": [Item("s11", "Zalm", 700, "250 gram"), Item("s12", "Picnic zalmfilet", 600, "250 gram")],
+    }
+
+    class Api:
+        def search(self, q):
+            return types.SimpleNamespace(items=next((v for k, v in catalogus.items() if k in q), []))
+
+    entry = types.SimpleNamespace(state="loaded", entry_id="pic1", runtime_data=types.SimpleNamespace(picnic_api_client=Api()))
+    hass.config_entries = types.SimpleNamespace(async_entries=lambda d: [entry])
+
+    async def executor(fn, *a):
+        return fn(*a)
+    hass.async_add_executor_job = executor
+
+    m = weekmenu.WeekmenuManager(hass)
+    m.import_plan(PLAN, None)
+    m.choose_day("ma", "r1")
+    res = asyncio.run(m.price_check())
+    sugg = {s["key"]: s for s in res["suggestions"]}
+    assert set(sugg) == {"p-s1", "p-s11"}
+    assert sugg["p-s1"]["alt"]["saving"] == 0.4 and sugg["p-s11"]["alt"]["picnic_id"] == "s12"
+    # alleen de melk doorvoeren (zelf aangevinkt)
+    out = m.apply_prices([{"key": "p-s1", "alt": sugg["p-s1"]["alt"]}])
+    assert out == {"applied": 1, "saving": 0.4}
+    rows = {i["key"]: i for i in m.snapshot()["view"]["items"]}
+    assert rows["p-s1"]["picnic_id"] == "s2" and rows["p-s11"]["picnic_id"] == "s11"
+    # receptregel via swap
+    m.apply_prices([{"key": "p-s11", "alt": sugg["p-s11"]["alt"]}])
+    rows = {i["key"]: i for i in m.snapshot()["view"]["items"]}
+    assert rows["p-s11"]["picnic_id"] == "s12" and rows["p-s11"]["unit_price"] == 6.0
+    asyncio.run(m.approve())
+    bought = {c["product_id"]: c["amount"] for c in hass.calls}
+    assert bought["s2"] == 2 and bought["s12"] == 1 and "s1" not in bought

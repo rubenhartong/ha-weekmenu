@@ -13,6 +13,7 @@ Plans without `days` behave as before: all items count.
 from __future__ import annotations
 
 import copy
+import math
 from typing import Any
 
 NONE = "none"
@@ -141,8 +142,35 @@ def effective_items(plan: dict[str, Any]) -> list[dict[str, Any]]:
     for row in rows.values():
         row["removed"] = row["qty"] == 0
         row["recipe"] = " + ".join(row["recipes"]) or row.get("recipe")
-        apply_bulk(row)
+        swap = (plan.get("swaps") or {}).get(row["key"])
+        if swap:
+            apply_swap(row, swap)
+        else:
+            apply_bulk(row)
     return out
+
+
+def apply_swap(row: dict[str, Any], swap: dict[str, Any]) -> None:
+    """Show a merged recipe row as the product chosen in the price check, for the same amount."""
+    qty = row.get("qty", 0)
+    ratio = float(swap["from_size"]) / float(swap["to_size"])
+    old_cost = qty * float(row.get("unit_price") or 0)
+    packs = max(1, math.ceil(round(qty * ratio, 6))) if qty else 0
+    row.update(
+        {
+            "small_name": row["name"],
+            "name": swap["name"],
+            "picnic_id": swap["picnic_id"],
+            "image_id": swap.get("image_id"),
+            "unit": swap.get("unit"),
+            "unit_price": float(swap["unit_price"]),
+            "promo": swap.get("promo"),
+            "qty": packs,
+            "qty_factor": 1 / ratio,
+            "note": f"prijscheck: was {row['name']}",
+        }
+    )
+    row["swap_saving"] = round(old_cost - packs * row["unit_price"], 2)
 
 
 def norm_bulk(raw: Any) -> dict[str, Any] | None:
@@ -169,7 +197,7 @@ def norm_bulk(raw: Any) -> dict[str, Any] | None:
 def apply_bulk(row: dict[str, Any]) -> None:
     """Swap a merged row to the larger pack when that is cheaper for the chosen recipes.
 
-    The row qty then counts large packs; set_qty multiplies back (``bulk_factor``)."""
+    The row qty then counts large packs; set_qty multiplies back (``qty_factor``)."""
     bulk = row.get("bulk")
     qty = row.get("qty", 0)
     small = row.get("unit_price")
@@ -191,7 +219,7 @@ def apply_bulk(row: dict[str, Any]) -> None:
             "unit_price": bulk["unit_price"],
             "promo": bulk.get("promo"),
             "qty": packs,
-            "bulk_factor": n,
+            "qty_factor": n,
             "bulk_saving": round(small_cost - bulk_cost, 2),
             "note": f"grote verpakking: €{small_cost - bulk_cost:.2f} goedkoper dan {qty}× {row['name']}".replace(".", ",", 1),
         }
@@ -216,9 +244,9 @@ def set_qty(plan: dict[str, Any], key: str, qty: int) -> None:
     active = [m for m in ms if chosen is None or m.get("source") != "recipe" or m.get("recipe_id") in chosen] or ms
     qty = max(0, int(qty))
     shown = next((r for r in effective_items(plan) if r.get("key") == key), None)
-    if shown and shown.get("bulk_factor"):
-        # the row shows large packs; members count small packs
-        qty *= shown["bulk_factor"]
+    if shown and shown.get("qty_factor"):
+        # the row shows large/other packs; members count the original packs
+        qty = math.ceil(round(qty * shown["qty_factor"], 6))
     first, others = active[0], active[1:]
     rest = sum(o["qty"] for o in others if not o.get("removed"))
     if qty >= rest:
