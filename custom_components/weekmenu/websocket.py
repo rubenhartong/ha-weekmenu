@@ -9,6 +9,7 @@ import voluptuous as vol
 from homeassistant.components import websocket_api
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError
+from homeassistant.util import dt as dt_util
 
 from .const import DOMAIN, READ_ONLY_GROUP
 from .manager import WeekmenuManager, parse_text_items
@@ -260,7 +261,18 @@ def ws_timer_stop(hass, connection, msg):
     _run(hass, connection, msg, lambda m: m.timer_stop(msg["id"]))
 
 
+@websocket_api.websocket_command({vol.Required("type"): "weekmenu/client_report", vol.Required("report"): dict})
+@callback
+def ws_client_report(hass, connection, msg):
+    """What a panel sees on its device (version, size, theme); kept in memory for diagnostics."""
+    mgr = get_manager(hass)
+    user = _user(connection) or "?"
+    mgr.clients[f"{user}|{str(msg['report'].get('ua', ''))[:60]}"] = {"user": user, "at": dt_util.utcnow().isoformat(), **msg["report"]}
+    connection.send_result(msg["id"])
+
+
 WS_COMMANDS = (
+    ws_client_report,
     ws_subscribe,
     ws_item_qty,
     ws_item_removed,

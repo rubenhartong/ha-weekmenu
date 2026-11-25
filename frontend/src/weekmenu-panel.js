@@ -120,10 +120,45 @@ class WeekmenuPanel extends LitElement {
 
   firstUpdated() { this._applyTheme(); }
 
+  /** Tell HA what this client sees (version, size, theme) — shown in diagnostics, for remote debugging. */
+  _report() {
+    try {
+      const app = this.renderRoot.querySelector(".app");
+      const cs = getComputedStyle(this);
+      const probe = document.createElement("div");
+      probe.style.cssText = "position:fixed;top:0;height:env(safe-area-inset-top);visibility:hidden";
+      document.body.appendChild(probe);
+      const safeTop = probe.getBoundingClientRect().height;
+      probe.remove();
+      const box = (sel) => { const r = this.renderRoot.querySelector(sel)?.getBoundingClientRect(); return r ? [Math.round(r.top), Math.round(r.bottom)] : null; };
+      this.hass.connection.sendMessagePromise({
+        type: "weekmenu/client_report",
+        report: {
+          build: new URL(import.meta.url).searchParams.get("v") || "dev",
+          element: this.localName,
+          ua: navigator.userAgent.slice(0, 160),
+          viewport: [window.innerWidth, window.innerHeight],
+          host: [Math.round(this.getBoundingClientRect().width), Math.round(this.getBoundingClientRect().height)],
+          app_height: app ? Math.round(app.getBoundingClientRect().height) : null,
+          header: box("header"), tabbar: box(".tabbar"), actionbar: box(".actionbar"),
+          safe_top: safeTop,
+          dark_attr: this.hasAttribute("dark"),
+          ha_dark_mode: !!this.hass.themes?.darkMode,
+          theme: this.hass.themes?.theme || null,
+          primary_bg: cs.getPropertyValue("--primary-background-color").trim(),
+          card_bg: cs.getPropertyValue("--card-background-color").trim(),
+          wm_line: cs.getPropertyValue("--wm-line").trim(),
+          narrow: !!this.narrow,
+          scroll_el: document.scrollingElement?.scrollHeight,
+        },
+      }).catch(() => {});
+    } catch (_) { /* best effort */ }
+  }
+
   _subscribe() {
     if (this._unsub || !this.hass) return;
     this._unsub = this.hass.connection.subscribeMessage((data) => this._receive(data), { type: "weekmenu/subscribe" });
-    this._unsub.then(() => (this.error = null)).catch((e) => {
+    this._unsub.then(() => { this.error = null; setTimeout(() => this._report(), 1500); }).catch((e) => {
       this._unsub = null;
       this.error = e?.message || String(e);
     });

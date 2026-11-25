@@ -151,6 +151,7 @@ class WeekmenuManager:
         self._listeners: list[Callable[[], None]] = []
         self._approve_lock = asyncio.Lock()
         self._timer_unsubs: dict[str, Callable[[], None]] = {}
+        self.clients: dict[str, dict[str, Any]] = {}  # what each open panel reports (debugging)
 
     async def async_load(self) -> None:
         stored = await self.store.async_load()
@@ -209,7 +210,12 @@ class WeekmenuManager:
 
     def context(self) -> dict[str, Any]:
         """Full data for Claude (get_context) and diagnostics."""
-        return {**copy.deepcopy(self.data), "view": logic.view(self.data.get("plan")), "claude_ready": bool(self._claude_link())}
+        return {
+            **copy.deepcopy(self.data),
+            "view": logic.view(self.data.get("plan")),
+            "claude_ready": bool(self._claude_link()),
+            "clients": list(self.clients.values()),
+        }
 
     # ---- plan -----------------------------------------------------------
     def _plan(self) -> dict[str, Any]:
