@@ -161,6 +161,12 @@ class WeekmenuManager:
             # HA restarted while filling the cart: whatever was sent is in plan.sent
             plan["status"] = STATUS_PROPOSED
             plan.pop("progress", None)
+        if plan:
+            # plans from before 0.9 only have the text ("za 5 dec 13:00")
+            tz = dt_util.get_default_time_zone()
+            for field in ("delivery", "order_deadline"):
+                if not plan.get(f"{field}_at") and plan.get(field):
+                    plan[f"{field}_at"] = schema.iso_or_none(schema.parse_when(plan[field], plan.get("week"), tz))
         self._restore_timers()
 
     @callback

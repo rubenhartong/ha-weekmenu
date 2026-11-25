@@ -235,7 +235,7 @@ async def test_unload_en_diagnostics(hass: HomeAssistant, setup) -> None:
 async def test_migratie_oude_goedgekeurde_week(hass: HomeAssistant, hass_storage) -> None:
     """Data from 0.8: an approved plan without 'sent' -> everything counts as already in the cart."""
     old_plan = {
-        "week": "2026-W48", "status": "approved", "recipes": [], "days": None, "results": [],
+        "week": "2026-W48", "status": "approved", "order_deadline": "za 28 nov 13:00", "recipes": [], "days": None, "results": [],
         "items": [{"key": "p-s1", "name": "Melk", "picnic_id": "s1", "qty": 2, "unit_price": 1.0, "source": "standard", "removed": False}],
     }
     hass_storage["weekmenu"] = {"version": 1, "minor_version": 1, "key": "weekmenu", "data": {"plan": old_plan, "standard_items": [], "preferences": {}, "feedback": []}}
@@ -247,3 +247,4 @@ async def test_migratie_oude_goedgekeurde_week(hass: HomeAssistant, hass_storage
     assert mgr.data["plan"]["sent"] == {"p:s1": {"qty": 2, "name": "Melk"}}
     assert mgr.data["timers"] == []
     assert mgr.snapshot()["view"]["summary"]["to_send"] == 0
+    assert mgr.data["plan"]["order_deadline_at"].startswith("2026-11-28T13:00")

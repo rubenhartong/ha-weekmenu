@@ -154,5 +154,5 @@ Items met `source: advice` zijn tips ("misschien bijna op") met een reden in `no
   `custom_components/weekmenu/frontend/weekmenu-panel.js`, die wordt meegecommit).
 - Kleuren, tekstmaten, afstanden: `frontend/src/tokens.js`. `npm test` controleert het contrast (WCAG AA) in licht en donker.
 - Schermafbeeldingen (telefoon en desktop, licht en donker): `npm run shots`.
-- Python: `pytest tests` (logica, zonder HA) en `pytest tests/ha` (tegen echte Home Assistant;
-  `pip install pytest-homeassistant-custom-component`).
+- Python: `pytest tests` (logica, zonder HA) en `WEEKMENU_HA=1 pytest tests/ha` (tegen echte Home Assistant;
+  `pip install pytest-homeassistant-custom-component`). Niet in één run combineren.
