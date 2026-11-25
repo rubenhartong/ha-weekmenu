@@ -5,7 +5,10 @@ const IMG = (id) => `https://storefront-prod.nl.picnicinternational.com/static/i
 
 // Foto van een gerecht: recipe.image_url (bijv. van een Picnic-recept) of recipe.image_id (Picnic-afbeelding).
 const DISH = (r) => {
-  if (r?.image_url && /^https:\/\//.test(r.image_url)) return r.image_url;
+  if (r?.image_url && /^https:\/\//.test(r.image_url)) {
+    // Picnic recipe photos exist as 600x600.png etc., not as large.png/medium.png
+    return r.image_url.replace(/(\/static\/images\/recipes\/[^/]+\/)(?:small|medium|large|extra-large)\.png$/, "$1600x600.png");
+  }
   if (r?.image_id) return `https://storefront-prod.nl.picnicinternational.com/static/images/${encodeURIComponent(r.image_id)}/large.png`;
   return null;
 };
