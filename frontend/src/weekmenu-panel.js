@@ -475,5 +475,10 @@ class WeekmenuPanel extends LitElement {
   }
 }
 
-// After an update an open app can load the new module next to the old one; defining twice throws.
-if (!customElements.get("weekmenu-panel")) customElements.define("weekmenu-panel", WeekmenuPanel);
+// Each build registers under its own name (weekmenu-panel-<hash>, from ?v= in the module URL).
+// An open app (e.g. the iOS companion app) keeps its old element; a fixed name can't be redefined,
+// so with a versioned name an update shows up without reloading the app.
+const version = new URL(import.meta.url).searchParams.get("v");
+for (const name of [version ? `weekmenu-panel-${version}` : null, "weekmenu-panel"]) {
+  if (name && !customElements.get(name)) customElements.define(name, class extends WeekmenuPanel {});
+}

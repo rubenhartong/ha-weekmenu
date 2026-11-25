@@ -64,7 +64,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: WeekmenuConfigEntry) -> 
     await panel_custom.async_register_panel(
         hass,
         frontend_url_path=PANEL_URL,
-        webcomponent_name="weekmenu-panel",
+        # versioned name: an app that is already open picks up a new build without a reload
+        webcomponent_name=f"weekmenu-panel-{version}",
         sidebar_title="Weekmenu",
         sidebar_icon="mdi:silverware-fork-knife",
         module_url=f"{STATIC_URL}/{PANEL_FILE}?v={version}",
