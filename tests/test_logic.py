@@ -119,3 +119,38 @@ def test_oud_plan_zonder_days_ongewijzigd():
     assert logic.chosen_ids(p) is None
     with pytest.raises(logic.PlanError):
         logic.choose_day(p, "ma", "r1")
+
+
+def test_grote_verpakking_bij_twee_recepten(plan):
+    # kip 400 g €5,69 in r2 en r5 (andere dagen); 1 kg-pak = 2 kleine voor €9,99
+    bulk = {"name": "Kipdijfilet 1 kg", "picnic_id": "s99", "unit_price": 9.99, "replaces": 2}
+    k2 = item("Kip", rid="r2", qty=1, price=5.69, pid="s13")
+    k5 = item("Kip", rid="r5", qty=1, price=5.69, pid="s13")
+    k2["bulk"] = logic.norm_bulk(bulk)
+    plan["items"] = [i for i in plan["items"] if i["picnic_id"] != "s13"] + [k2, k5]
+    logic.choose_day(plan, "ma", "r2")
+    row = next(i for i in logic.effective_items(plan) if i["key"] == "p-s13")
+    assert (row["name"], row["qty"]) == ("Kip", 1)  # één recept: klein pak
+    logic.choose_day(plan, "di", "r5")
+    row = next(i for i in logic.effective_items(plan) if i["key"] == "p-s13")
+    assert (row["picnic_id"], row["qty"], row["bulk_saving"]) == ("s99", 1, 1.39)
+    assert "goedkoper" in row["note"]
+    assert logic.summary(plan)["items_total"] == round(2 * 1.19 + 9.99, 2)
+    # +1 op de grote rij = nog een groot pak (2 kleine porties erbij)
+    logic.set_qty(plan, "p-s13", 2)
+    row = next(i for i in logic.effective_items(plan) if i["key"] == "p-s13")
+    assert (row["picnic_id"], row["qty"]) == ("s99", 2)
+
+
+def test_grote_verpakking_alleen_als_goedkoper():
+    p = {"recipes": [{"id": "r1"}, {"id": "r2"}], "days": logic.norm_days(
+        [{"day": "ma", "options": ["r1"]}, {"day": "di", "options": ["r2"]}], {"r1", "r2"})}
+    a = item("Pasta", rid="r1", qty=1, price=1.0, pid="s5")
+    b = item("Pasta", rid="r2", qty=1, price=1.0, pid="s5")
+    a["bulk"] = logic.norm_bulk({"name": "Pasta 1 kg", "picnic_id": "s6", "unit_price": 2.2, "replaces": 2})
+    p["items"] = [a, b]
+    logic.choose_day(p, "ma", "r1")
+    logic.choose_day(p, "di", "r2")
+    row = logic.effective_items(p)[0]
+    assert (row["picnic_id"], row["qty"]) == ("s5", 2)
+    assert logic.norm_bulk({"name": "x", "picnic_id": "s1", "unit_price": 1, "replaces": 1}) is None

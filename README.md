@@ -62,6 +62,7 @@ plan:
       source: standard   # standard | promo | recipe | extra | michelle | advice
       recipe: null
       recipe_id: null    # bij source: recipe het recept-id (r1…); nodig voor keuze per dag
+      bulk: null         # optioneel bij recept-ingrediënten: grotere verpakking, zie hieronder
   # optioneel: kiezen per dag (ma–vr). Zonder `days` werkt alles zoals voorheen.
   days:
     - { day: ma, date: "2026-11-30", slot: AGV,   options: [r1, r2, r3], choice: null }
@@ -86,6 +87,10 @@ plan:
   `recipe_id`) van gekozen recepten. Hetzelfde product in meerdere gekozen recepten wordt één
   regel met opgetelde aantallen. Een dag zonder keuze telt bij akkoord als niets koken; het
   paneel waarschuwt ("2 dagen nog niet gekozen") en `approve` geeft `days_open` terug.
+- Grote verpakking: een recept-item kan `bulk: {name, picnic_id, unit_price, replaces}` hebben
+  (`replaces` = hoeveel kleine verpakkingen één grote vervangt). Is het product nodig in meerdere
+  gekozen recepten en is de grote verpakking dan goedkoper, dan toont de lijst (en het mandje)
+  de grote verpakking met de besparing als 💡-notitie. +/− op die regel telt in grote pakken.
 - Kookmodus toont alleen gekozen recepten, op volgorde van de dagen.
 - Het paneel en `get_context` krijgen naast de opgeslagen gegevens een berekend `view`:
   `items` (wat meetelt) en `summary` (`days_chosen`, `days_total`, `days_open`, `recipe_price`,

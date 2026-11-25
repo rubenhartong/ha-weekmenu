@@ -90,6 +90,9 @@ def _norm_item(raw: dict[str, Any], default_source: str = "extra") -> dict[str, 
         "question": raw.get("question"),
         "removed": bool(raw.get("removed", False)),
     }
+    bulk = logic.norm_bulk(raw.get("bulk"))
+    if bulk:
+        item["bulk"] = bulk
     key = raw.get("key") or _item_key(item)
     # recipe ingredients stay separate per recipe, so they can follow the day choice
     if item["source"] == "recipe" and item["recipe_id"] and "@" not in key:

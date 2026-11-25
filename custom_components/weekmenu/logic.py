@@ -132,6 +132,8 @@ def effective_items(plan: dict[str, Any]) -> list[dict[str, Any]]:
             rows[bk] = row
             out.append(row)
         row["members"].append(it["key"])
+        if not row.get("bulk") and it.get("bulk"):
+            row["bulk"] = copy.deepcopy(it["bulk"])
         if not it.get("removed"):
             row["qty"] += max(0, int(it.get("qty", 0)))
         if it.get("recipe") and it["recipe"] not in row["recipes"]:
@@ -139,7 +141,61 @@ def effective_items(plan: dict[str, Any]) -> list[dict[str, Any]]:
     for row in rows.values():
         row["removed"] = row["qty"] == 0
         row["recipe"] = " + ".join(row["recipes"]) or row.get("recipe")
+        apply_bulk(row)
     return out
+
+
+def norm_bulk(raw: Any) -> dict[str, Any] | None:
+    """Optional larger pack for a recipe product: {name, picnic_id, unit_price, replaces (n small packs)}."""
+    if not isinstance(raw, dict):
+        return None
+    try:
+        replaces = int(raw.get("replaces") or 0)
+        price = float(raw["unit_price"])
+    except (KeyError, TypeError, ValueError):
+        return None
+    if replaces < 2 or not raw.get("picnic_id") or not raw.get("name"):
+        return None
+    return {
+        "name": str(raw["name"]).strip(),
+        "picnic_id": str(raw["picnic_id"]).strip(),
+        "image_id": raw.get("image_id"),
+        "unit_price": price,
+        "replaces": replaces,
+        "promo": raw.get("promo"),
+    }
+
+
+def apply_bulk(row: dict[str, Any]) -> None:
+    """Swap a merged row to the larger pack when that is cheaper for the chosen recipes.
+
+    The row qty then counts large packs; set_qty multiplies back (``bulk_factor``)."""
+    bulk = row.get("bulk")
+    qty = row.get("qty", 0)
+    small = row.get("unit_price")
+    if not bulk or qty < 2 or small is None:
+        return
+    n = bulk["replaces"]
+    packs = -(-qty // n)  # ceil
+    small_cost = qty * float(small)
+    bulk_cost = packs * bulk["unit_price"]
+    if bulk_cost >= small_cost - 0.005:
+        return
+    row.update(
+        {
+            "small_name": row["name"],
+            "small_qty": qty,
+            "name": bulk["name"],
+            "picnic_id": bulk["picnic_id"],
+            "image_id": bulk.get("image_id") or row.get("image_id"),
+            "unit_price": bulk["unit_price"],
+            "promo": bulk.get("promo"),
+            "qty": packs,
+            "bulk_factor": n,
+            "bulk_saving": round(small_cost - bulk_cost, 2),
+            "note": f"grote verpakking: €{small_cost - bulk_cost:.2f} goedkoper dan {qty}× {row['name']}".replace(".", ",", 1),
+        }
+    )
 
 
 def members(plan: dict[str, Any], key: str) -> list[dict[str, Any]]:
@@ -159,6 +215,10 @@ def set_qty(plan: dict[str, Any], key: str, qty: int) -> None:
     chosen = chosen_ids(plan)
     active = [m for m in ms if chosen is None or m.get("source") != "recipe" or m.get("recipe_id") in chosen] or ms
     qty = max(0, int(qty))
+    shown = next((r for r in effective_items(plan) if r.get("key") == key), None)
+    if shown and shown.get("bulk_factor"):
+        # the row shows large packs; members count small packs
+        qty *= shown["bulk_factor"]
     first, others = active[0], active[1:]
     rest = sum(o["qty"] for o in others if not o.get("removed"))
     if qty >= rest:
