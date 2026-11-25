@@ -9,5 +9,21 @@
     "abort": {
       "already_configured": "Weekmenu is al toegevoegd."
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Claude-koppeling (Andere gerechten)",
+        "description": "Voor de tegel 'Andere gerechten'. Open claude.ai/code/routines → taak 'Weekmenu nieuwe recepten' → Bewerken → Trigger + → API. Kopieer de Fire URL en klik Generate token. Token leeg laten = huidig token houden; Fire URL leeg = koppeling uit.",
+        "data": {
+          "claude_fire_url": "Fire URL",
+          "claude_token": "Token"
+        }
+      }
+    },
+    "error": {
+      "invalid_url": "Dit is geen Fire URL van een Claude-taak (https://api.anthropic.com/v1/claude_code/routines/…/fire).",
+      "token_required": "Vul het token in."
+    }
   }
 }

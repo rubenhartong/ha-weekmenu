@@ -96,6 +96,11 @@ plan:
   ook een grotere verpakking). Je vinkt zelf aan wat je doorvoert. Websocket: `weekmenu/price_check`
   en `weekmenu/apply_prices` (`changes: [{key, alt}]`). Bij recept-ingrediënten wordt de vervanging
   onthouden (`plan.swaps`), zodat de hoeveelheid de dagkeuzes blijft volgen.
+- Andere gerechten: aan het eind van de rij opties per dag staat een tegel *Andere gerechten*
+  (met optionele wens). Die start via een API-trigger een Claude-taak die 2–3 nieuwe opties voor
+  die dag bedenkt en toevoegt met `weekmenu.add_options` (`day`, `recipes`, `items`, `week`).
+  Eenmalig instellen: claude.ai/code/routines → taak → Bewerken → Trigger + → API → Fire URL en
+  token kopiëren → Instellingen → Apparaten & diensten → Weekmenu → Configureren.
 - Kookmodus toont alleen gekozen recepten, op volgorde van de dagen.
 - Het paneel en `get_context` krijgen naast de opgeslagen gegevens een berekend `view`:
   `items` (wat meetelt) en `summary` (`days_chosen`, `days_total`, `days_open`, `recipe_price`,

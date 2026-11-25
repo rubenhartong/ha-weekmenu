@@ -77,3 +77,32 @@ choose_day:
       description: Recept-id (bijv. r2), "none" voor niets koken, of leeg om de keuze ongedaan te maken.
       selector:
         text:
+
+add_options:
+  name: Opties toevoegen aan een dag
+  description: >-
+    Voegt nieuwe receptopties toe aan één dag (voor de tegel "Andere gerechten").
+    Keuzes en lijst blijven staan. Recept-ids worden opnieuw genummerd; items koppelen via recipe_id.
+  fields:
+    day:
+      name: Dag
+      required: true
+      example: di
+      selector:
+        text:
+    recipes:
+      name: Recepten
+      description: Zelfde formaat als recipes in import_plan.
+      required: true
+      selector:
+        object:
+    items:
+      name: Ingrediënten
+      description: Recept-items met recipe_id van een recept hierboven (zelfde formaat als items in import_plan).
+      selector:
+        object:
+    week:
+      name: Week
+      description: Ter controle, bijv. 2026-W48.
+      selector:
+        text:

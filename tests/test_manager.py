@@ -36,9 +36,11 @@ def _stub_ha():
     mod("homeassistant.helpers")
     mod("homeassistant.helpers.config_validation", config_entry_only_config_schema=lambda d: None, string=str)
     mod("homeassistant.helpers.storage", Store=Store)
+    mod("homeassistant.helpers.aiohttp_client", async_get_clientsession=lambda hass: hass.http_session)
     from datetime import datetime, timezone
     mod("homeassistant.util")
-    mod("homeassistant.util.dt", utcnow=lambda: datetime.now(timezone.utc), now=lambda: datetime.now())
+    mod("homeassistant.util.dt", utcnow=lambda: datetime.now(timezone.utc), now=lambda: datetime.now(),
+        parse_datetime=lambda s: datetime.fromisoformat(s) if s else None)
     sys.modules["homeassistant.util"].dt = sys.modules["homeassistant.util.dt"]
     sys.modules["homeassistant.helpers"].config_validation = sys.modules["homeassistant.helpers.config_validation"]
     return HomeAssistantError
@@ -205,3 +207,73 @@ def test_prijscheck_en_doorvoeren():
     asyncio.run(m.approve())
     bought = {c["product_id"]: c["amount"] for c in hass.calls}
     assert bought["s2"] == 2 and bought["s12"] == 1 and "s1" not in bought
+
+
+class _Resp:
+    def __init__(self, status, data):
+        self.status, self._data = status, data
+    async def __aenter__(self): return self
+    async def __aexit__(self, *a): return False
+    async def text(self): return str(self._data)
+    async def json(self, content_type=None): return self._data
+
+
+class _Session:
+    def __init__(self, status=200):
+        self.posts, self.status = [], status
+    def post(self, url, json=None, headers=None, timeout=None):
+        self.posts.append((url, json, headers))
+        return _Resp(self.status, {"type": "routine_fire", "claude_code_session_url": "https://claude.ai/code/session_x"})
+
+
+def test_andere_gerechten_aanvragen_en_toevoegen():
+    hass = FakeHass()
+    hass.http_session = _Session()
+    m = weekmenu.WeekmenuManager(hass)
+    m.import_plan(PLAN, None)
+    with pytest.raises(HAErr):  # nog niet ingesteld
+        asyncio.run(m.request_recipes("di", "iets met vis"))
+    assert m.snapshot()["claude_ready"] is False
+    url = "https://api.anthropic.com/v1/claude_code/routines/trig_x/fire"
+    m.entry = types.SimpleNamespace(options={"claude_fire_url": url, "claude_token": "tok"})
+    assert m.snapshot()["claude_ready"] is True
+    m.choose_day("di", "r4")
+    res = asyncio.run(m.request_recipes("di", "iets met vis"))
+    sent_url, body, headers = hass.http_session.posts[0]
+    assert sent_url == url and headers["Authorization"] == "Bearer tok"
+    assert "dag: di" in body["text"] and "wens: iets met vis" in body["text"] and "Pasta" in body["text"]
+    assert res["pending"]["session_url"].endswith("session_x")
+    with pytest.raises(HAErr):  # al bezig
+        asyncio.run(m.request_recipes("di"))
+
+    out = m.add_options(
+        "di",
+        [{"id": "x1", "title": "Pasta met zalm", "steps": ["kook", "bak"]}, {"id": "x2", "title": "Gnocchi"}],
+        [{"name": "Zalm", "picnic_id": "s11", "qty": 1, "unit_price": 7.0, "recipe_id": "x1"},
+         {"name": "Gnocchi", "picnic_id": "s20", "qty": 2, "unit_price": 1.5, "recipe_id": "x2"},
+         {"name": "Wees", "picnic_id": "s21", "qty": 1, "unit_price": 1, "recipe_id": "zz"}],
+        week="2026-W49",
+    )
+    assert out == {"day": "di", "added": ["r5", "r6"]}
+    di = next(d for d in m.data["plan"]["days"] if d["day"] == "di")
+    assert di["options"] == ["r4", "r1", "r5", "r6"] and di["choice"] == "r4" and di["pending"] is None
+    keys = [i["key"] for i in m.data["plan"]["items"]]
+    assert "p-s11@r5" in keys and "p-s20@r6" in keys and not any("s21" in k for k in keys)
+    assert m.data["plan"]["recipes"][-2]["steps"] == [{"text": "kook"}, {"text": "bak"}]
+    assert hass.events[-1] == ("weekmenu_options_added", {"day": "di", "recipes": ["Pasta met zalm", "Gnocchi"]})
+    m.choose_day("di", "r5")
+    rows = {i["key"]: i for i in m.snapshot()["view"]["items"]}
+    assert rows["p-s11"]["qty"] == 1 and "p-s20" not in rows
+    with pytest.raises(HAErr):
+        m.add_options("di", [{"title": "x"}], [], week="2026-W50")
+
+
+def test_andere_gerechten_token_fout():
+    hass = FakeHass()
+    hass.http_session = _Session(status=401)
+    m = weekmenu.WeekmenuManager(hass)
+    m.import_plan(PLAN, None)
+    m.entry = types.SimpleNamespace(options={"claude_fire_url": "u", "claude_token": "t"})
+    with pytest.raises(HAErr, match="token"):
+        asyncio.run(m.request_recipes("ma"))
+    assert not next(d for d in m.data["plan"]["days"] if d["day"] == "ma").get("pending")

@@ -234,6 +234,11 @@ h2 { font-size: 17px; margin: 24px 4px 10px; font-weight: 650; }
 .ofoot .btn { width: 100%; min-height: 44px; padding: 10px 14px; font-size: 15px; border-radius: 12px; }
 .ocard.on .ofoot .btn { background: transparent; color: var(--acc); border: 1.5px solid var(--acc); }
 .ocard.nocook .oemoji { opacity: .8; }
+.ocard.more { border-style: dashed; }
+.ocard.more .wish { width: 100%; box-sizing: border-box; padding: 11px 12px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--card); color: var(--tx); font: inherit; font-size: 15px; }
+.ocard.more .wish:focus { outline: none; border-color: var(--acc); }
+.oemoji.spin { animation: wmpulse 1.6s ease-in-out infinite; }
+@keyframes wmpulse { 50% { opacity: .35; } }
 .sdots { display:flex; gap: 5px; justify-content:center; padding: 0 0 14px; }
 .sdots i { width: 6px; height: 6px; border-radius: 99px; background: var(--line); transition: width .2s, background .2s; }
 .sdots i.on { background: var(--tx2); width: 16px; }
@@ -564,7 +569,8 @@ class WeekmenuPanel extends HTMLElement {
       <div class="dmid">${slot ? `<div class="dslot">${esc(slot)}</div>` : ""}${main}${d.note ? `<div class="dnote">${esc(d.note)}</div>` : ""}</div>
       <div class="dright">${r?.price != null ? eur(r.price) : ""}${chev}</div></button>`;
     if (!open) return `<div class="${cls}">${head}</div>`;
-    const cards = [...(d.options || []).map((id) => this._optionCard(d, this._recipeById(id))).filter(Boolean), this._noneCard(d)];
+    const more = this.plan?.status === "approved" ? [] : [this._moreCard(d)];
+    const cards = [...(d.options || []).map((id) => this._optionCard(d, this._recipeById(id))).filter(Boolean), ...more, this._noneCard(d)];
     const chosenIdx = d.choice === "none" ? cards.length - 1 : Math.max(0, (d.options || []).indexOf(d.choice));
     return `<div class="${cls}">${head}
       <div class="strip" data-day="${esc(d.day)}">${cards.join("")}</div>
@@ -650,6 +656,31 @@ class WeekmenuPanel extends HTMLElement {
         <div class="acts"><button class="btn ghost" data-a="pclose">${list.length ? "Annuleren" : "Sluiten"}</button>
           ${list.length ? `<button class="btn" data-a="papply" ${chosen.length ? "" : "disabled"}>${chosen.length ? `Vervang ${chosen.length} · −${eur(save)}` : "Niets gekozen"}</button>` : ""}</div>
       </div>`;
+  }
+
+  _pending(d) {
+    const at = d.pending?.at ? Date.parse(d.pending.at) : 0;
+    return at && Date.now() - at < 20 * 60 * 1000;
+  }
+
+  _moreCard(d) {
+    if (this._pending(d)) {
+      return `<div class="ocard more">
+        <div class="ohead"><div class="oemoji spin">⏳</div>
+          <div><div class="otitle">Claude zoekt nieuwe gerechten…</div>
+          <div class="ometa"><span>Over 5–10 minuten staan ze hier${d.pending.wish ? ` · “${esc(d.pending.wish)}”` : ""}</span></div></div></div>
+        <div class="muted small">Je kunt de app gewoon sluiten.</div>
+      </div>`;
+    }
+    const ready = this.data?.claude_ready;
+    return `<div class="ocard more">
+      <div class="ohead"><div class="oemoji">🔄</div>
+        <div><div class="otitle">Andere gerechten</div>
+        <div class="ometa"><span>Claude bedenkt 2–3 nieuwe opties voor ${esc(DAYS[d.day] || d.day)}</span></div></div></div>
+      <input class="wish" id="wish-${esc(d.day)}" placeholder="Wens? Bijv. iets met vis" enterkeyhint="send" autocomplete="off" maxlength="200">
+      ${ready ? "" : `<div class="muted small">Eerst eenmalig instellen: Instellingen → Apparaten &amp; diensten → Weekmenu → Configureren.</div>`}
+      <div class="ofoot"><button class="btn" data-a="more" data-v="${esc(d.day)}" ${ready ? "" : "disabled"}>Vraag Claude</button></div>
+    </div>`;
   }
 
   _noneCard(d) {
@@ -888,6 +919,8 @@ class WeekmenuPanel extends HTMLElement {
       inp?.addEventListener("keydown", (e) => { if (e.key === "Enter") this._act(id); });
       inp?.addEventListener("input", () => this._onSearchInput(id, inp.value));
     });
+    root.querySelectorAll('input[id^="wish-"]').forEach((inp) =>
+      inp.addEventListener("keydown", (e) => { if (e.key === "Enter") this._act("more", inp.id.slice(5)); }));
     root.querySelectorAll('input[id^="own-"]').forEach((inp) => inp.addEventListener("input", () => this._onSearchInput(inp.id, inp.value)));
     root.querySelectorAll('input[id^="own-"]').forEach((inp) =>
       inp.addEventListener("keydown", (e) => { if (e.key === "Enter") this._act("own", null, { dataset: { q: inp.id.slice(4) } }); }));
@@ -1034,6 +1067,18 @@ class WeekmenuPanel extends HTMLElement {
         break;
       }
       case "pclose": ui.price = null; break;
+      case "more": {
+        const d = (this.days || []).find((x) => x.day === v); if (!d || this._pending(d)) return;
+        if (!this.data?.claude_ready) return this._toast("Stel eerst de Claude-koppeling in bij Weekmenu → Configureren");
+        const inp = this.shadowRoot.getElementById(`wish-${v}`);
+        const wish = inp?.value.trim() || null;
+        d.pending = { at: new Date().toISOString(), wish }; this._render();
+        try {
+          await this._ws({ type: "weekmenu/request_recipes", day: v, wish });
+          this._toast("Claude is bezig. De nieuwe gerechten verschijnen vanzelf.");
+        } catch (e) { d.pending = null; this._render(); }
+        return;
+      }
       case "papply": {
         const p = ui.price; if (!p?.result) return;
         const changes = p.result.suggestions.filter((x) => p.sel.has(x.key)).map((x) => ({ key: x.key, alt: x.alt }));

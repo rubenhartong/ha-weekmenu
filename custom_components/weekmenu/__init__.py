@@ -33,11 +33,15 @@ from homeassistant.core import (
 )
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.storage import Store
 from homeassistant.util import dt as dt_util
 
 from . import logic, prices
 from .const import (
+    CONF_FIRE_URL,
+    CONF_TOKEN,
+    PENDING_MINUTES,
     DOMAIN,
     PANEL_URL,
     PICNIC_DOMAIN,
@@ -116,6 +120,14 @@ def _norm_items(raw_items: list[dict[str, Any]], default_source: str) -> list[di
     return list(out.values())
 
 
+def _norm_recipe(raw: dict[str, Any], default_id: str) -> dict[str, Any]:
+    r = dict(raw)
+    r.setdefault("id", default_id)
+    r.setdefault("selected", True)
+    r["steps"] = [s if isinstance(s, dict) else {"text": str(s)} for s in r.get("steps") or []]
+    return r
+
+
 TEXT_ITEM_RE = re.compile(r"^\s*(\d+)\s*[x×]?\s+(.+?)\s*$", re.IGNORECASE)
 
 
@@ -138,6 +150,7 @@ class WeekmenuManager:
         self.hass = hass
         self.store: Store = Store(hass, STORAGE_VERSION, STORAGE_KEY)
         self.data: dict[str, Any] = _empty_data()
+        self.entry: ConfigEntry | None = None
         self._listeners: list[Callable[[], None]] = []
 
     async def async_load(self) -> None:
@@ -181,15 +194,7 @@ class WeekmenuManager:
     @callback
     def import_plan(self, plan: dict[str, Any], standard_items: list | None) -> None:
         plan = copy.deepcopy(plan)
-        recipes = []
-        for i, r in enumerate(plan.get("recipes") or []):
-            r = dict(r)
-            r.setdefault("id", f"r{i + 1}")
-            r.setdefault("selected", True)
-            r["steps"] = [
-                s if isinstance(s, dict) else {"text": str(s)} for s in r.get("steps") or []
-            ]
-            recipes.append(r)
+        recipes = [_norm_recipe(r, f"r{i + 1}") for i, r in enumerate(plan.get("recipes") or [])]
         michelle = plan.get("michelle")
         if michelle:
             michelle = dict(michelle)
@@ -405,6 +410,111 @@ class WeekmenuManager:
             )
         return out
 
+    # ---- new recipes via Claude ----------------------------------------------
+    def _claude_link(self) -> tuple[str, str] | None:
+        opts = self.entry.options if self.entry else {}
+        url, token = opts.get(CONF_FIRE_URL), opts.get(CONF_TOKEN)
+        return (url, token) if url and token else None
+
+    def _day(self, plan: dict[str, Any], day: str) -> dict[str, Any]:
+        dk = str(day).strip().lower()[:2]
+        d = next((x for x in plan.get("days") or [] if x["day"] == dk), None)
+        if d is None:
+            raise HomeAssistantError(f"Onbekende dag: {day}")
+        return d
+
+    async def request_recipes(self, day: str, wish: str | None = None) -> dict[str, Any]:
+        """Ask the Claude task for new options for one day (button 'Andere gerechten')."""
+        plan = self._plan()
+        if plan.get("status") == "approved":
+            raise HomeAssistantError("Deze week staat al in je mandje. Tik eerst op Aanpassen.")
+        d = self._day(plan, day)
+        link = self._claude_link()
+        if not link:
+            raise HomeAssistantError(
+                "Stel eerst de Claude-koppeling in: Instellingen → Apparaten & diensten → Weekmenu → Configureren."
+            )
+        pending = d.get("pending")
+        if pending:
+            started = dt_util.parse_datetime(pending.get("at") or "")
+            if started and (dt_util.utcnow() - started).total_seconds() < PENDING_MINUTES * 60:
+                raise HomeAssistantError("Claude zoekt al nieuwe gerechten voor deze dag.")
+        wish = (wish or "").strip()[:200]
+        titles = {r.get("id"): r.get("title") for r in plan.get("recipes") or []}
+        text = "\n".join(
+            [
+                "Weekmenu: nieuwe gerechten voor één dag.",
+                f"week: {plan.get('week')}",
+                f"dag: {d['day']} ({logic.DAY_NAMES.get(d['day'], d['day'])} {d.get('date') or ''})".rstrip(),
+                f"slot: {d.get('slot') or 'vrij'}",
+                f"wens: {wish or '-'}",
+                "al opties deze dag: " + "; ".join(str(titles.get(o)) for o in d.get("options") or []),
+            ]
+        )
+        url, token = link
+        session = async_get_clientsession(self.hass)
+        try:
+            async with session.post(
+                url,
+                json={"text": text},
+                headers={
+                    "Authorization": f"Bearer {token}",
+                    "anthropic-beta": "experimental-cc-routine-2026-04-01",
+                    "anthropic-version": "2023-06-01",
+                },
+                timeout=30,
+            ) as resp:
+                if resp.status >= 300:
+                    body = (await resp.text())[:300]
+                    _LOGGER.warning("Claude-taak starten mislukt (%s): %s", resp.status, body)
+                    hint = " Het token klopt niet meer; maak een nieuw token en vul het in bij Weekmenu → Configureren." if resp.status in (401, 403) else ""
+                    raise HomeAssistantError(f"Claude kon niet gestart worden (fout {resp.status}).{hint}")
+                data = await resp.json(content_type=None)
+        except HomeAssistantError:
+            raise
+        except Exception as err:  # noqa: BLE001
+            raise HomeAssistantError(f"Claude is niet bereikbaar: {err}") from err
+        d["pending"] = {"at": dt_util.utcnow().isoformat(), "wish": wish or None, "session_url": (data or {}).get("claude_code_session_url")}
+        self.changed()
+        return {"day": d["day"], "pending": d["pending"]}
+
+    @callback
+    def add_options(self, day: str, recipes: list[dict[str, Any]], items: list[dict[str, Any]] | None, week: str | None = None) -> dict[str, Any]:
+        """Add new recipe options to one day (called by the Claude task). Choices and the list stay as they are."""
+        plan = self._plan()
+        if week and plan.get("week") and week != plan["week"]:
+            raise HomeAssistantError(f"Voorstel is voor {plan['week']}, niet {week}.")
+        d = self._day(plan, day)
+        used = {r.get("id") for r in plan.get("recipes") or []}
+        nums = [int(i[1:]) for i in used if isinstance(i, str) and i[:1] == "r" and i[1:].isdigit()]
+        n = max(nums or [0]) + 1
+        idmap: dict[str, str] = {}
+        added = []
+        for i, raw in enumerate(recipes or []):
+            if not raw.get("title"):
+                continue
+            new_id = f"r{n}"
+            n += 1
+            idmap[str(raw.get("id") or f"new{i}")] = new_id
+            r = _norm_recipe({**raw, "id": new_id}, new_id)
+            r["selected"] = False
+            plan["recipes"].append(r)
+            d["options"].append(new_id)
+            added.append(r)
+        new_items = []
+        for raw in items or []:
+            rid = idmap.get(str(raw.get("recipe_id")))
+            if not rid:
+                continue
+            new_items.append({**raw, "recipe_id": rid, "source": "recipe", "key": None})
+        plan["items"].extend(_norm_items(new_items, "recipe"))
+        d["pending"] = None
+        self.changed()
+        self.hass.bus.async_fire(
+            f"{DOMAIN}_options_added", {"day": d["day"], "recipes": [r.get("title") for r in added]}
+        )
+        return {"day": d["day"], "added": [r["id"] for r in added]}
+
     # ---- price check -------------------------------------------------------
     async def price_check(self) -> dict[str, Any]:
         """Search Picnic for cheaper equivalent products for everything on this week's list."""
@@ -504,7 +614,7 @@ class WeekmenuManager:
 
     def snapshot(self) -> dict[str, Any]:
         """Stored data plus a computed view (items that count, day summary) for the panel."""
-        return {**self.data, "view": logic.view(self.data.get("plan"))}
+        return {**self.data, "view": logic.view(self.data.get("plan")), "claude_ready": bool(self._claude_link())}
 
     @callback
     def add_items(self, raw_items: list[dict[str, Any]]) -> None:
@@ -859,6 +969,19 @@ async def ws_search(hass, connection, msg):
     connection.send_result(msg["id"], {"query": msg["query"], "results": await _mgr(hass).search(msg["query"])})
 
 
+@websocket_api.websocket_command(
+    {vol.Required("type"): "weekmenu/request_recipes", vol.Required("day"): str, vol.Optional("wish"): vol.Any(str, None)}
+)
+@websocket_api.async_response
+async def ws_request_recipes(hass, connection, msg):
+    try:
+        result = await _mgr(hass).request_recipes(msg["day"], msg.get("wish"))
+    except HomeAssistantError as err:
+        connection.send_error(msg["id"], "weekmenu_error", str(err))
+        return
+    connection.send_result(msg["id"], result)
+
+
 @websocket_api.websocket_command({vol.Required("type"): "weekmenu/price_check"})
 @websocket_api.async_response
 async def ws_price_check(hass, connection, msg):
@@ -942,6 +1065,7 @@ WS_COMMANDS = (
     ws_choose_day,
     ws_search,
     ws_price_check,
+    ws_request_recipes,
     ws_apply_prices,
     ws_add_item,
     ws_answer_item,
@@ -992,6 +1116,26 @@ def _register_services(hass: HomeAssistant) -> None:
         mgr.changed()
 
     hass.services.async_register(DOMAIN, "import_plan", import_plan, schema=IMPORT_SCHEMA)
+
+    async def add_options(call: ServiceCall) -> ServiceResponse:
+        return _mgr(hass).add_options(
+            call.data["day"], call.data["recipes"], call.data.get("items"), call.data.get("week")
+        )
+
+    hass.services.async_register(
+        DOMAIN,
+        "add_options",
+        add_options,
+        schema=vol.Schema(
+            {
+                vol.Required("day"): cv.string,
+                vol.Required("recipes"): [dict],
+                vol.Optional("items"): [dict],
+                vol.Optional("week"): cv.string,
+            }
+        ),
+        supports_response=SupportsResponse.OPTIONAL,
+    )
     hass.services.async_register(
         DOMAIN, "get_context", get_context, supports_response=SupportsResponse.ONLY
     )
@@ -1057,6 +1201,7 @@ async def async_setup(hass: HomeAssistant, config) -> bool:
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     mgr = WeekmenuManager(hass)
     await mgr.async_load()
+    mgr.entry = entry
     hass.data[DOMAIN] = mgr
 
     if not hass.data.get(f"{DOMAIN}_static"):
