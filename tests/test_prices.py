@@ -77,3 +77,11 @@ def test_swap_volgt_keuzes():
     logic.set_qty(p, "p-s1", 2)  # 2 kg -> 5 pakjes van 400 g
     assert sum(i["qty"] for i in p["items"]) == 5
     assert logic.effective_items(p)[0]["qty"] == 2
+
+
+def test_similar_geen_ander_product():
+    assert not prices.similar("Halfvolle melk 1 liter", "Volle melk 1 liter")
+    assert not prices.similar("Melk", "Karnemelk")
+    assert not prices.similar("Melk 1 liter", "Halfvolle melk 1 liter")  # extra woord verandert het product
+    assert prices.similar("Cherrytomaten", "Picnic cherrytomaat")
+    assert prices.similar("Picnic halfvolle melk 1L", "Campina halfvolle melk")

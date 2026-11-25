@@ -71,13 +71,31 @@ def search_query(name: str | None) -> str:
     return " ".join(ws[-3:]) if ws else (name or "")
 
 
+def _stem(w: str) -> str:
+    """Rough Dutch stem for plurals: 'tomaten'/'tomaat' -> 'tomat', 'eieren'/'ei' stays apart."""
+    for suf in ("en", "s", "e", "n"):
+        if w.endswith(suf) and len(w) - len(suf) >= 3:
+            w = w[: -len(suf)]
+            break
+    for v in "aeou":
+        w = w.replace(v + v, v)
+    return w
+
+
+def _same_word(a: str, b: str) -> bool:
+    """Same word or its plural. No matching inside words: 'melk' is not 'karnemelk',
+    'volle' is not 'halfvolle' and 'aardappelen' is not 'aardappelpuree'."""
+    return a == b or _stem(a) == _stem(b)
+
+
 def similar(current: str, candidate: str) -> bool:
-    """Candidate is the same kind of product: (nearly) all significant words of the current name match."""
+    """Candidate is the same kind of product, checked both ways (no extra words that change the product)."""
     cw, kw = words(current), words(candidate)
     if not cw or not kw:
         return False
-    hits = sum(1 for w in cw if any(w in k or k in w for k in kw if min(len(w), len(k)) >= 4 or w == k))
-    return hits / len(cw) >= 0.67
+    hits = sum(1 for w in cw if any(_same_word(w, k) for k in kw))
+    back = sum(1 for k in kw if any(_same_word(k, w) for w in cw))
+    return hits / len(cw) >= 0.67 and back / len(kw) > 0.5
 
 
 def per_unit(price: float | None, size: tuple[float, str] | None) -> float | None:

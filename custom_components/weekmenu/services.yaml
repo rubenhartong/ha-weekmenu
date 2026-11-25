@@ -4,7 +4,9 @@ import_plan:
   fields:
     plan:
       name: Plan
-      description: Object met week, delivery, order_deadline, advice, recipes[], items[], michelle.
+      description: >-
+        Object met week, delivery_at en order_deadline_at (ISO-tijd, bijv. 2026-12-05T13:00:00+01:00; of delivery/order_deadline
+        als tekst "za 5 dec 13:00"), advice, recipes[], items[], days[], questions[], michelle. Wordt gecontroleerd; fouten noemen de plek.
       required: true
       selector:
         object:
@@ -18,7 +20,16 @@ get_context:
   description: Geeft alle Weekmenu-gegevens terug (voorkeuren, standaardlijst, feedback, huidig plan).
 approve:
   name: Akkoord en mandje vullen
-  description: Zet alle producten die niet zijn weggehaald in het Picnic-mandje.
+  description: >-
+    Zet wat nog niet in het Picnic-mandje staat erin (opnieuw aanroepen voegt alleen het verschil toe).
+    Staan er dagen zonder keuze open, dan gebeurt er niets en komt blocked terug, tenzij allow_open_days aan staat.
+  fields:
+    allow_open_days:
+      name: Ook met open dagen
+      description: Dagen zonder keuze tellen dan als niets koken.
+      default: false
+      selector:
+        boolean:
 add_text:
   name: Producten toevoegen
   description: Voegt producten toe aan deze week, bijv. "hagelslag, 2x komkommer".

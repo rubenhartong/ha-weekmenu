@@ -26,10 +26,12 @@ def _stub_ha():
     deco = lambda *a, **k: ident
     mod("homeassistant")
     mod("homeassistant.components", panel_custom=types.SimpleNamespace(), websocket_api=types.SimpleNamespace(
-        websocket_command=deco, async_response=ident, event_message=lambda i, d: d, async_register_command=lambda *a: None))
+        websocket_command=deco, async_response=ident, event_message=lambda i, d: d, async_register_command=lambda *a: None,
+        ERR_UNAUTHORIZED="unauthorized"))
     mod("homeassistant.components.frontend", async_remove_panel=lambda *a: None)
     mod("homeassistant.components.http", StaticPathConfig=object)
     mod("homeassistant.config_entries", ConfigEntry=object, ConfigEntryState=types.SimpleNamespace(LOADED="loaded"))
+    mod("homeassistant.const", Platform=types.SimpleNamespace(SENSOR="sensor"))
     mod("homeassistant.core", HomeAssistant=object, ServiceCall=object, ServiceResponse=dict,
         SupportsResponse=types.SimpleNamespace(ONLY=1, OPTIONAL=2), callback=ident)
     mod("homeassistant.exceptions", HomeAssistantError=HomeAssistantError)
@@ -37,9 +39,11 @@ def _stub_ha():
     mod("homeassistant.helpers.config_validation", config_entry_only_config_schema=lambda d: None, string=str)
     mod("homeassistant.helpers.storage", Store=Store)
     mod("homeassistant.helpers.aiohttp_client", async_get_clientsession=lambda hass: hass.http_session)
+    mod("homeassistant.helpers.event", async_track_point_in_utc_time=lambda hass, cb, at: (lambda: None))
     from datetime import datetime, timezone
     mod("homeassistant.util")
     mod("homeassistant.util.dt", utcnow=lambda: datetime.now(timezone.utc), now=lambda: datetime.now(),
+        get_default_time_zone=lambda: timezone.utc,
         parse_datetime=lambda s: datetime.fromisoformat(s) if s else None)
     sys.modules["homeassistant.util"].dt = sys.modules["homeassistant.util.dt"]
     sys.modules["homeassistant.helpers"].config_validation = sys.modules["homeassistant.helpers.config_validation"]
@@ -49,7 +53,7 @@ def _stub_ha():
 HAErr = _stub_ha()
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "custom_components"))
 pytest.importorskip("voluptuous")
-import weekmenu  # noqa: E402
+import weekmenu.manager as weekmenu  # noqa: E402
 
 
 class FakeHass:
@@ -120,7 +124,7 @@ def test_oud_plan_zonder_days():
     m.import_plan(old, None)
     assert all(r["selected"] for r in m.data["plan"]["recipes"])
     res = asyncio.run(m.approve())
-    assert res["total"] == 5 and res["days_open"] == []
+    assert res["total"] == 4 and res["days_open"] == []  # ui uit twee recepten = één product
 
 
 def test_zoeken_bekend_en_picnic_en_toevoegen():
@@ -173,8 +177,8 @@ def test_prijscheck_en_doorvoeren():
             self.id, self.name, self.display_price, self.unit_quantity, self.image_id = i, n, p, u, None
 
     catalogus = {
-        "melk": [Item("s1", "Melk", 119, "1 liter"), Item("s2", "Picnic halfvolle melk", 99, "1 liter")],
-        "zalm": [Item("s11", "Zalm", 700, "250 gram"), Item("s12", "Picnic zalmfilet", 600, "250 gram")],
+        "melk": [Item("s1", "Melk", 119, "1 liter"), Item("s2", "Picnic melk", 99, "1 liter")],
+        "zalm": [Item("s11", "Zalm", 700, "250 gram"), Item("s12", "Picnic zalm", 600, "250 gram")],
     }
 
     class Api:

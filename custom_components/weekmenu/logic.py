@@ -282,6 +282,16 @@ def summary(plan: dict[str, Any]) -> dict[str, Any]:
     )
     active = [i for i in effective_items(plan) if not i.get("removed") and i.get("qty", 0) > 0]
     total = sum(float(i["unit_price"]) * i["qty"] for i in active if i.get("unit_price") is not None)
+    unknown = sum(1 for i in active if i.get("unit_price") is None)
+    savings = 0.0
+    for i in active:
+        promo = i.get("promo") or {}
+        try:
+            saving = float(promo.get("saving") or 0)
+        except (TypeError, ValueError):
+            saving = 0.0
+        savings += saving * (i["qty"] if promo.get("per_unit") else 1)
+        savings += float(i.get("bulk_saving") or 0) + max(0.0, float(i.get("swap_saving") or 0))
     return {
         "days_total": len(days),
         "days_chosen": len(chosen_days),
@@ -289,11 +299,62 @@ def summary(plan: dict[str, Any]) -> dict[str, Any]:
         "recipe_price": round(recipe_price, 2),
         "items_total": round(total, 2),
         "items_count": len(active),
+        "unknown_prices": unknown,
+        "savings": round(savings, 2),
     }
+
+
+def product_key(item: dict[str, Any]) -> str:
+    """Identity of a product in the Picnic cart (what add_product adds to)."""
+    if item.get("picnic_id"):
+        return f"p:{item['picnic_id']}"
+    name = "".join(ch for ch in str(item.get("name", "")).lower() if ch.isalnum() or ch == " ").strip()
+    return f"n:{' '.join(name.split())}"
+
+
+def wanted(plan: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    """What should be in the cart now: product key -> {qty, name, picnic_id, source}."""
+    out: dict[str, dict[str, Any]] = {}
+    for it in effective_items(plan):
+        qty = int(it.get("qty") or 0)
+        if it.get("removed") or qty <= 0:
+            continue
+        pk = product_key(it)
+        row = out.setdefault(
+            pk,
+            {"qty": 0, "name": it.get("name"), "picnic_id": it.get("picnic_id"), "source": it.get("source"), "key": it.get("key")},
+        )
+        row["qty"] += qty
+    return out
+
+
+def cart_delta(plan: dict[str, Any]) -> dict[str, Any]:
+    """Difference between what is wanted and what was already sent to Picnic.
+
+    add: still to send (positive amounts); remove: sent earlier but no longer wanted
+    (Picnic has no 'remove' action in Home Assistant, so the user does that in the app).
+    """
+    want = wanted(plan)
+    sent: dict[str, dict[str, Any]] = plan.get("sent") or {}
+    add, remove = [], []
+    for pk, w in want.items():
+        d = w["qty"] - int((sent.get(pk) or {}).get("qty", 0))
+        if d > 0:
+            add.append({**w, "pkey": pk, "qty": d})
+    for pk, s in sent.items():
+        d = int(s.get("qty", 0)) - want.get(pk, {}).get("qty", 0)
+        if d > 0:
+            remove.append({"pkey": pk, "name": s.get("name"), "qty": d})
+    return {"add": add, "remove": remove}
 
 
 def view(plan: dict[str, Any] | None) -> dict[str, Any] | None:
     """Computed, read-only view sent to the panel next to the stored plan."""
     if not plan:
         return None
-    return {"items": effective_items(plan), "summary": summary(plan)}
+    delta = cart_delta(plan)
+    sm = summary(plan)
+    sm["to_send"] = sum(1 for _ in delta["add"])
+    sm["to_remove"] = delta["remove"]
+    sm["unlinked"] = sum(1 for i in effective_items(plan) if not i.get("removed") and i.get("qty", 0) > 0 and not i.get("picnic_id"))
+    return {"items": effective_items(plan), "summary": sm}

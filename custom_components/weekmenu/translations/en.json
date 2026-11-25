@@ -25,5 +25,30 @@
       "invalid_url": "Dit is geen Fire URL van een Claude-taak (https://api.anthropic.com/v1/claude_code/routines/…/fire).",
       "token_required": "Vul het token in."
     }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "Status",
+        "state": {
+          "none": "No proposal",
+          "proposed": "Proposal ready",
+          "approving": "Filling cart",
+          "approved": "In cart"
+        }
+      },
+      "total": {
+        "name": "Total"
+      },
+      "order_deadline": {
+        "name": "Order deadline"
+      },
+      "delivery": {
+        "name": "Delivery"
+      },
+      "tonight": {
+        "name": "Tonight"
+      }
+    }
   }
 }
