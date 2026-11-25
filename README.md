@@ -2,9 +2,10 @@
 
 Boodschappen (Picnic), recepten en kookmodus in één paneel in de HA-zijbalk.
 
-- **Week:** status van het weekvoorstel, totaal en voordeel, recepten als kaarten, keuze voor Michelle bij een late dienst op dinsdag.
-- **Lijst:** producten per groep met foto, +/− en swipe om weg te halen (met Ongedaan). Segment *Altijd* voor de vaste lijst.
-- **Koken:** klaarzetten-checklist, één stap per scherm (swipen of tikken), timers, scherm blijft aan, duim omhoog/omlaag na afloop.
+- **Week:** *Vanavond* (gerecht van vandaag, direct koken), beoordelen van gisteren, keuze per dag, status met totaal en voordeel, keuze voor Michelle bij een late dienst op dinsdag, snackvragen.
+- **Lijst:** producten per groep met foto, +/− en swipe om weg te halen (met Ongedaan), producten koppelen aan Picnic, goedkoper alternatief zoeken. Segment *Elke week* voor de vaste lijst.
+- **Koken:** klaarzetten-checklist, één stap per scherm (swipen of tikken), timers op de server (lopen door als de app dicht is), scherm blijft aan, duim omhoog/omlaag na afloop.
+- **Naar Picnic:** eerst een overzicht (aantal, totaal, open dagen, niet-gekoppelde producten), dan pas het mandje. Opnieuw akkoord geven voegt alleen het verschil toe.
 
 ## Installeren
 
@@ -18,16 +19,37 @@ Boodschappen (Picnic), recepten en kookmodus in één paneel in de HA-zijbalk.
 |---|---|
 | `weekmenu.import_plan` | Nieuw weekvoorstel (door Claude op vrijdag) |
 | `weekmenu.get_context` | Alle gegevens ophalen (voorkeuren, vaste lijst, feedback, plan) |
-| `weekmenu.approve` | Alles in het Picnic-mandje zetten |
+| `weekmenu.approve` | Mandje vullen met wat er nog niet in staat. Met open dagen gebeurt er niets (`blocked`), tenzij `allow_open_days: true` |
 | `weekmenu.add_text` | Producten toevoegen: `"hagelslag, 2x komkommer"` |
 | `weekmenu.michelle_choose` | Michelles meeneem-keuze |
 | (paneel) zoeken | Voorstellen bij typen: bekende producten + Picnic-zoekresultaten (websocket `weekmenu/search`, `weekmenu/add_item`, `weekmenu/answer_item`) |
 | `weekmenu.choose_day` | Keuze per dag: `{day: "ma", choice: "r2" \| "none" \| null}` |
 | `weekmenu.set_preferences` | Voorkeuren bijwerken |
 
-Bij akkoord vuurt het event `weekmenu_approved` (`added`, `failed`, `total`).
+Bij akkoord vuurt het event `weekmenu_approved` (`added`, `failed`, `total`, `failures`, `to_remove`, `days_open`).
+
+## Sensoren
+
+| Entity | Inhoud |
+|---|---|
+| `sensor.weekmenu_status` | `none` / `proposed` / `approving` / `approved`; attributen o.a. `days_open`, `to_send`, `failed` |
+| `sensor.weekmenu_totaal` | Totaal in euro; `unknown_prices`, `savings` |
+| `sensor.weekmenu_besteldeadline` | Tijdstip (voor automations: "3 uur voor de deadline") |
+| `sensor.weekmenu_bezorging` | Tijdstip van de bezorging |
+| `sensor.weekmenu_vanavond` | Gekozen gerecht van vandaag, `Niets koken` of `Nog niet gekozen` |
+
+## Akkoord en het Picnic-mandje
+
+De integratie onthoudt per product wat al naar Picnic is gestuurd (`plan.sent`). Na *Aanpassen* en opnieuw
+akkoord gaat alleen het verschil erheen. Wat niet meer nodig is maar al in het mandje staat, staat in `to_remove`
+(Home Assistant kan niets uit het Picnic-mandje halen; dat doe je in de app). Lukt er niets, dan blijft de status
+`proposed`. Twee keer tegelijk akkoord geven kan niet.
 
 ## Planformaat (`import_plan`)
+
+Het plan wordt gecontroleerd; een fout noemt de plek, bijvoorbeeld `items[3].qty: verwacht een heel getal` of
+`items[7].recipe_id: recept r19 bestaat niet`. Tijden mogen als ISO (`delivery_at`, `order_deadline_at`) of als tekst
+(`delivery: "zo 6 dec 12:00"`).
 
 ```yaml
 plan:
@@ -125,3 +147,12 @@ Event: `weekmenu_answer` (`question_id`, `who`, `option_id`, `title`).
 ## Bijna op (huishoudspullen)
 
 Items met `source: advice` zijn tips ("misschien bijna op") met een reden in `note`. Wegvegen, zelf toevoegen en kopen wordt gelogd in `preferences.restock_log` (`skipped` / `added` / `bought` met datum); het vrijdagvoorstel gebruikt dat samen met de Picnic-geschiedenis om het ritme per product bij te stellen.
+
+## Ontwikkelen
+
+- Paneel: `frontend/src` (Lit). Bouwen: `cd frontend && npm install && npm run build` (schrijft
+  `custom_components/weekmenu/frontend/weekmenu-panel.js`, die wordt meegecommit).
+- Kleuren, tekstmaten, afstanden: `frontend/src/tokens.js`. `npm test` controleert het contrast (WCAG AA) in licht en donker.
+- Schermafbeeldingen (telefoon en desktop, licht en donker): `npm run shots`.
+- Python: `pytest tests` (logica, zonder HA) en `pytest tests/ha` (tegen echte Home Assistant;
+  `pip install pytest-homeassistant-custom-component`).

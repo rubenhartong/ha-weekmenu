@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weekmenu harness</title>
+<style>html,body{margin:0;height:100%;} body{background:#fafafa}</style></head>
+<body>
+<script type="module">
+  const q = new URLSearchParams(location.search);
+  const fixtures = await (await fetch("./fixtures.json")).json();
+  const snap = structuredClone(fixtures[q.get("state") || "proposed"]);
+  const dark = q.get("dark") === "1";
+  if (dark) document.body.style.background = "#111111";
+  let push = null;
+  const results = [
+    { name: "Picnic bakpapier 8 meter", picnic_id: "s90", unit: "8 meter", unit_price: 1.99, bron: "picnic" },
+    { name: "Albal bakpapier", picnic_id: "s91", unit: "10 meter", unit_price: 2.79, bron: "picnic" },
+  ];
+  window.__sent = [];
+  const connection = {
+    subscribeMessage(cb) { push = cb; setTimeout(() => cb(structuredClone(snap)), 0); return Promise.resolve(() => {}); },
+    async sendMessagePromise(msg) {
+      window.__sent.push(msg);
+      if (msg.type === "weekmenu/search") return { query: msg.query, results };
+      if (msg.type === "weekmenu/approve") return { ok: true, added: 13, failed: 0, total: 13, to_remove: [], days_open: [] };
+      if (msg.type === "weekmenu/price_check") return { checked: 12, total_saving: 0.9, suggestions: [
+        { key: "p-s2", current: { name: "Volkoren brood", qty: 1, total: 2.39 }, alt: { name: "Picnic volkoren brood", qty: 1, total: 1.79, saving: 0.6, reason: "goedkoper per stuk", picnic_id: "s99", unit_price: 1.79 } },
+        { key: "p-s3", current: { name: "Bananen", qty: 1, total: 1.69 }, alt: { name: "Picnic bananen", qty: 1, total: 1.39, saving: 0.3, reason: "goedkoper per kilo", picnic_id: "s98", unit_price: 1.39 } } ] };
+      if (msg.type === "weekmenu/item_qty") { const it = snap.view.items.find((i) => i.key === msg.key); if (it) it.qty = msg.qty; push(structuredClone(snap)); }
+      return null;
+    },
+  };
+  await import("../../custom_components/weekmenu/frontend/weekmenu-panel.js");
+  const el = document.createElement("weekmenu-panel");
+  el.narrow = q.get("narrow") === "1";
+  el.hass = { themes: { darkMode: dark }, user: { name: q.get("user") || "Ruben" }, connection };
+  document.body.appendChild(el);
+  window.__panel = el;
+</script>
+</body></html>

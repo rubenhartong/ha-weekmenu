@@ -1,0 +1,3402 @@
+{
+ "proposed": {
+  "plan": {
+   "week": "2026-W48",
+   "delivery": "zo 22 nov 12:00",
+   "order_deadline": "za 21 nov 13:00",
+   "delivery_at": "2026-11-22T12:00:00+00:00",
+   "order_deadline_at": "2026-11-21T13:00:00+00:00",
+   "advice": "Zalm is deze week 35% goedkoper; daarom twee visopties.",
+   "generated_at": "2026-11-25T19:49:30.318802+00:00",
+   "status": "proposed",
+   "recipes": [
+    {
+     "id": "r1",
+     "emoji": "🐟",
+     "title": "Zalm uit de oven met krieltjes en broccoli",
+     "minutes": 30,
+     "price": 14.2,
+     "why": "zalm −35%",
+     "servings": "2 volw. + Kai",
+     "ingredients": [
+      "2 zalmfilets",
+      "500 g krieltjes",
+      "1 broccoli"
+     ],
+     "pantry": [
+      "olijfolie",
+      "peper",
+      "zout"
+     ],
+     "steps": [
+      {
+       "text": "Verwarm de oven voor op 200 °C."
+      },
+      {
+       "text": "Snijd de krieltjes doormidden en meng met olie, peper en zout."
+      },
+      {
+       "text": "Bak de krieltjes 15 minuten in de oven.",
+       "timer_sec": 900
+      },
+      {
+       "text": "Leg de zalm erbij en bak nog 12 minuten.",
+       "timer_sec": 720
+      },
+      {
+       "text": "Kook de broccoli 5 minuten en serveer."
+      }
+     ],
+     "tips": {
+      "michelle": "Zalm door en door gaar.",
+      "kai": "Graatjes checken, kleine stukjes."
+     },
+     "selected": true
+    },
+    {
+     "id": "r2",
+     "emoji": "🍗",
+     "title": "Kip-kerrie met rijst en sperziebonen",
+     "minutes": 25,
+     "price": 9.8,
+     "why": "kipdij 2e halve prijs",
+     "servings": "2 volw. + Kai",
+     "ingredients": [
+      "2 zalmfilets",
+      "500 g krieltjes",
+      "1 broccoli"
+     ],
+     "pantry": [
+      "olijfolie",
+      "peper",
+      "zout"
+     ],
+     "steps": [
+      {
+       "text": "Verwarm de oven voor op 200 °C."
+      },
+      {
+       "text": "Snijd de krieltjes doormidden en meng met olie, peper en zout."
+      },
+      {
+       "text": "Bak de krieltjes 15 minuten in de oven.",
+       "timer_sec": 900
+      },
+      {
+       "text": "Leg de zalm erbij en bak nog 12 minuten.",
+       "timer_sec": 720
+      },
+      {
+       "text": "Kook de broccoli 5 minuten en serveer."
+      }
+     ],
+     "tips": {
+      "michelle": "Zalm door en door gaar.",
+      "kai": "Graatjes checken, kleine stukjes."
+     },
+     "selected": false
+    },
+    {
+     "id": "r3",
+     "emoji": "🥩",
+     "title": "Gehaktballetjes in tomatensaus met puree",
+     "minutes": 30,
+     "price": 8.9,
+     "why": null,
+     "servings": "2 volw. + Kai",
+     "ingredients": [
+      "2 zalmfilets",
+      "500 g krieltjes",
+      "1 broccoli"
+     ],
+     "pantry": [
+      "olijfolie",
+      "peper",
+      "zout"
+     ],
+     "steps": [
+      {
+       "text": "Verwarm de oven voor op 200 °C."
+      },
+      {
+       "text": "Snijd de krieltjes doormidden en meng met olie, peper en zout."
+      },
+      {
+       "text": "Bak de krieltjes 15 minuten in de oven.",
+       "timer_sec": 900
+      },
+      {
+       "text": "Leg de zalm erbij en bak nog 12 minuten.",
+       "timer_sec": 720
+      },
+      {
+       "text": "Kook de broccoli 5 minuten en serveer."
+      }
+     ],
+     "tips": {
+      "michelle": "Zalm door en door gaar.",
+      "kai": "Graatjes checken, kleine stukjes."
+     },
+     "selected": false
+    },
+    {
+     "id": "r4",
+     "emoji": "🍝",
+     "title": "Pasta pesto met kip en cherrytomaatjes",
+     "minutes": 20,
+     "price": 7.6,
+     "why": "pesto 1+1",
+     "servings": "2 volw. + Kai",
+     "ingredients": [
+      "2 zalmfilets",
+      "500 g krieltjes",
+      "1 broccoli"
+     ],
+     "pantry": [
+      "olijfolie",
+      "peper",
+      "zout"
+     ],
+     "steps": [
+      {
+       "text": "Verwarm de oven voor op 200 °C."
+      },
+      {
+       "text": "Snijd de krieltjes doormidden en meng met olie, peper en zout."
+      },
+      {
+       "text": "Bak de krieltjes 15 minuten in de oven.",
+       "timer_sec": 900
+      },
+      {
+       "text": "Leg de zalm erbij en bak nog 12 minuten.",
+       "timer_sec": 720
+      },
+      {
+       "text": "Kook de broccoli 5 minuten en serveer."
+      }
+     ],
+     "tips": {
+      "michelle": "Zalm door en door gaar.",
+      "kai": "Graatjes checken, kleine stukjes."
+     },
+     "selected": true
+    },
+    {
+     "id": "r5",
+     "emoji": "🍝",
+     "title": "Macaroni met ham en kaas",
+     "minutes": 25,
+     "price": 6.4,
+     "why": null,
+     "servings": "2 volw. + Kai",
+     "ingredients": [
+      "2 zalmfilets",
+      "500 g krieltjes",
+      "1 broccoli"
+     ],
+     "pantry": [
+      "olijfolie",
+      "peper",
+      "zout"
+     ],
+     "steps": [
+      {
+       "text": "Verwarm de oven voor op 200 °C."
+      },
+      {
+       "text": "Snijd de krieltjes doormidden en meng met olie, peper en zout."
+      },
+      {
+       "text": "Bak de krieltjes 15 minuten in de oven.",
+       "timer_sec": 900
+      },
+      {
+       "text": "Leg de zalm erbij en bak nog 12 minuten.",
+       "timer_sec": 720
+      },
+      {
+       "text": "Kook de broccoli 5 minuten en serveer."
+      }
+     ],
+     "tips": {
+      "michelle": "Zalm door en door gaar.",
+      "kai": "Graatjes checken, kleine stukjes."
+     },
+     "selected": false
+    },
+    {
+     "id": "r6",
+     "emoji": "🥔",
+     "title": "Boerenkoolstamppot met rookworst",
+     "minutes": 30,
+     "price": 7.1,
+     "why": "boerenkool −25%",
+     "servings": "2 volw. + Kai",
+     "ingredients": [
+      "2 zalmfilets",
+      "500 g krieltjes",
+      "1 broccoli"
+     ],
+     "pantry": [
+      "olijfolie",
+      "peper",
+      "zout"
+     ],
+     "steps": [
+      {
+       "text": "Verwarm de oven voor op 200 °C."
+      },
+      {
+       "text": "Snijd de krieltjes doormidden en meng met olie, peper en zout."
+      },
+      {
+       "text": "Bak de krieltjes 15 minuten in de oven.",
+       "timer_sec": 900
+      },
+      {
+       "text": "Leg de zalm erbij en bak nog 12 minuten.",
+       "timer_sec": 720
+      },
+      {
+       "text": "Kook de broccoli 5 minuten en serveer."
+      }
+     ],
+     "tips": {
+      "michelle": "Zalm door en door gaar.",
+      "kai": "Graatjes checken, kleine stukjes."
+     },
+     "selected": true
+    },
+    {
+     "id": "r7",
+     "emoji": "🍛",
+     "title": "Nasi met satésaus en komkommer",
+     "minutes": 25,
+     "price": 8.3,
+     "why": null,
+     "servings": "2 volw. + Kai",
+     "ingredients": [
+      "2 zalmfilets",
+      "500 g krieltjes",
+      "1 broccoli"
+     ],
+     "pantry": [
+      "olijfolie",
+      "peper",
+      "zout"
+     ],
+     "steps": [
+      {
+       "text": "Verwarm de oven voor op 200 °C."
+      },
+      {
+       "text": "Snijd de krieltjes doormidden en meng met olie, peper en zout."
+      },
+      {
+       "text": "Bak de krieltjes 15 minuten in de oven.",
+       "timer_sec": 900
+      },
+      {
+       "text": "Leg de zalm erbij en bak nog 12 minuten.",
+       "timer_sec": 720
+      },
+      {
+       "text": "Kook de broccoli 5 minuten en serveer."
+      }
+     ],
+     "tips": {
+      "michelle": "Zalm door en door gaar.",
+      "kai": "Graatjes checken, kleine stukjes."
+     },
+     "selected": false
+    },
+    {
+     "id": "r8",
+     "emoji": "🌮",
+     "title": "Wraps met kip, paprika en maïs",
+     "minutes": 20,
+     "price": 9.2,
+     "why": "wraps 2 voor €3",
+     "servings": "2 volw. + Kai",
+     "ingredients": [
+      "2 zalmfilets",
+      "500 g krieltjes",
+      "1 broccoli"
+     ],
+     "pantry": [
+      "olijfolie",
+      "peper",
+      "zout"
+     ],
+     "steps": [
+      {
+       "text": "Verwarm de oven voor op 200 °C."
+      },
+      {
+       "text": "Snijd de krieltjes doormidden en meng met olie, peper en zout."
+      },
+      {
+       "text": "Bak de krieltjes 15 minuten in de oven.",
+       "timer_sec": 900
+      },
+      {
+       "text": "Leg de zalm erbij en bak nog 12 minuten.",
+       "timer_sec": 720
+      },
+      {
+       "text": "Kook de broccoli 5 minuten en serveer."
+      }
+     ],
+     "tips": {
+      "michelle": "Zalm door en door gaar.",
+      "kai": "Graatjes checken, kleine stukjes."
+     },
+     "selected": false
+    },
+    {
+     "id": "r9",
+     "emoji": "🍳",
+     "title": "Shakshuka met brood",
+     "minutes": 25,
+     "price": 6.1,
+     "why": null,
+     "servings": "2 volw. + Kai",
+     "ingredients": [
+      "2 zalmfilets",
+      "500 g krieltjes",
+      "1 broccoli"
+     ],
+     "pantry": [
+      "olijfolie",
+      "peper",
+      "zout"
+     ],
+     "steps": [
+      {
+       "text": "Verwarm de oven voor op 200 °C."
+      },
+      {
+       "text": "Snijd de krieltjes doormidden en meng met olie, peper en zout."
+      },
+      {
+       "text": "Bak de krieltjes 15 minuten in de oven.",
+       "timer_sec": 900
+      },
+      {
+       "text": "Leg de zalm erbij en bak nog 12 minuten.",
+       "timer_sec": 720
+      },
+      {
+       "text": "Kook de broccoli 5 minuten en serveer."
+      }
+     ],
+     "tips": {
+      "michelle": "Zalm door en door gaar.",
+      "kai": "Graatjes checken, kleine stukjes."
+     },
+     "selected": false
+    }
+   ],
+   "days": [
+    {
+     "day": "ma",
+     "date": "2026-11-23",
+     "slot": "AGV",
+     "note": null,
+     "options": [
+      "r1",
+      "r3"
+     ],
+     "choice": "r1"
+    },
+    {
+     "day": "di",
+     "date": "2026-11-24",
+     "slot": "Pasta",
+     "note": "Vaak bij opa en oma",
+     "options": [
+      "r4",
+      "r5"
+     ],
+     "choice": "r4"
+    },
+    {
+     "day": "wo",
+     "date": "2026-11-25",
+     "slot": "Stamppot of rijst",
+     "note": null,
+     "options": [
+      "r6",
+      "r7"
+     ],
+     "choice": "r6"
+    },
+    {
+     "day": "do",
+     "date": "2026-11-26",
+     "slot": "Vrije keus",
+     "note": null,
+     "options": [
+      "r2",
+      "r8"
+     ],
+     "choice": null
+    },
+    {
+     "day": "vr",
+     "date": "2026-11-27",
+     "slot": "Makkelijk",
+     "note": null,
+     "options": [
+      "r9"
+     ],
+     "choice": null
+    }
+   ],
+   "items": [
+    {
+     "name": "Halfvolle melk 1 liter",
+     "picnic_id": "s1",
+     "image_id": null,
+     "unit": "1 liter",
+     "qty": 2,
+     "unit_price": 1.19,
+     "promo": null,
+     "source": "standard",
+     "recipe": null,
+     "recipe_id": null,
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s1"
+    },
+    {
+     "name": "Volkoren brood",
+     "picnic_id": "s2",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 2.39,
+     "promo": null,
+     "source": "standard",
+     "recipe": null,
+     "recipe_id": null,
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s2"
+    },
+    {
+     "name": "Bananen",
+     "picnic_id": "s3",
+     "image_id": null,
+     "unit": "1 kilo",
+     "qty": 1,
+     "unit_price": 1.69,
+     "promo": null,
+     "source": "standard",
+     "recipe": null,
+     "recipe_id": null,
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s3"
+    },
+    {
+     "name": "Griekse yoghurt",
+     "picnic_id": "s4",
+     "image_id": null,
+     "unit": null,
+     "qty": 2,
+     "unit_price": 1.89,
+     "promo": {
+      "label": "2e halve prijs",
+      "saving": 0.95
+     },
+     "source": "promo",
+     "recipe": null,
+     "recipe_id": null,
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s4"
+    },
+    {
+     "name": "Vuilniszakken",
+     "picnic_id": "s5",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 2.49,
+     "promo": null,
+     "source": "advice",
+     "recipe": null,
+     "recipe_id": null,
+     "note": "laatst 6 weken geleden",
+     "question": null,
+     "removed": false,
+     "key": "p-s5"
+    },
+    {
+     "name": "Bakpapier",
+     "picnic_id": null,
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": null,
+     "promo": null,
+     "source": "extra",
+     "recipe": null,
+     "recipe_id": null,
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "n-bakpapier"
+    },
+    {
+     "name": "Zalmfilet 2 stuks",
+     "picnic_id": "s10",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 6.99,
+     "promo": {
+      "label": "−35%",
+      "saving": 3.76
+     },
+     "source": "recipe",
+     "recipe": "🐟 Zalm",
+     "recipe_id": "r1",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s10@r1"
+    },
+    {
+     "name": "Krieltjes 500 g",
+     "picnic_id": "s11",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 1.79,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🐟 Zalm",
+     "recipe_id": "r1",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s11@r1"
+    },
+    {
+     "name": "Broccoli",
+     "picnic_id": "s12",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 1.29,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🐟 Zalm",
+     "recipe_id": "r1",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s12@r1"
+    },
+    {
+     "name": "Pesto genovese",
+     "picnic_id": "s13",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 2.49,
+     "promo": {
+      "label": "1+1 gratis",
+      "saving": 2.49
+     },
+     "source": "recipe",
+     "recipe": "🍝 Pasta pesto",
+     "recipe_id": "r4",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s13@r4"
+    },
+    {
+     "name": "Kipfilet 300 g",
+     "picnic_id": "s14",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 3.99,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🍝 Pasta pesto",
+     "recipe_id": "r4",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s14@r4"
+    },
+    {
+     "name": "Kipfilet 300 g",
+     "picnic_id": "s14",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 3.99,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🌮 Wraps",
+     "recipe_id": "r8",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s14@r8"
+    },
+    {
+     "name": "Boerenkool gesneden",
+     "picnic_id": "s15",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 1.49,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🥔 Stamppot",
+     "recipe_id": "r6",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s15@r6"
+    },
+    {
+     "name": "Rookworst",
+     "picnic_id": "s16",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 2.29,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🥔 Stamppot",
+     "recipe_id": "r6",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s16@r6"
+    },
+    {
+     "name": "Wraps naturel",
+     "picnic_id": "s17",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 1.65,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🌮 Wraps",
+     "recipe_id": "r8",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s17@r8"
+    }
+   ],
+   "michelle": null,
+   "questions": [
+    {
+     "id": "kai_fruit",
+     "who": "kai",
+     "title": "Kai · groente of fruit",
+     "question": "Snack voor tussendoor",
+     "options": [
+      {
+       "id": "o1",
+       "emoji": "🥒",
+       "title": "Snackkomkommers",
+       "items": []
+      },
+      {
+       "id": "o2",
+       "emoji": "🍎",
+       "title": "Appeltjes",
+       "items": []
+      },
+      {
+       "id": "o3",
+       "emoji": "🍊",
+       "title": "Mandarijntjes",
+       "new": true,
+       "items": []
+      }
+     ],
+     "choice": "o2",
+     "custom": null
+    },
+    {
+     "id": "michelle_snack",
+     "who": "michelle",
+     "title": "Michelle · snack",
+     "question": "Snack voor deze week",
+     "options": [
+      {
+       "id": "o1",
+       "emoji": "🍪",
+       "title": "Sultana",
+       "items": []
+      },
+      {
+       "id": "o2",
+       "emoji": "🥜",
+       "title": "Rijstwafels",
+       "items": []
+      }
+     ],
+     "choice": null,
+     "custom": null
+    }
+   ],
+   "approved_at": null,
+   "results": [],
+   "sent": {}
+  },
+  "standard_items": [
+   {
+    "name": "Halfvolle melk 1 liter",
+    "picnic_id": "s1",
+    "image_id": null,
+    "unit": null,
+    "qty": 2,
+    "unit_price": 1.19,
+    "promo": null,
+    "source": "standard",
+    "recipe": null,
+    "recipe_id": null,
+    "note": null,
+    "question": null,
+    "removed": false,
+    "key": "p-s1"
+   },
+   {
+    "name": "Volkoren brood",
+    "picnic_id": "s2",
+    "image_id": null,
+    "unit": null,
+    "qty": 1,
+    "unit_price": 2.39,
+    "promo": null,
+    "source": "standard",
+    "recipe": null,
+    "recipe_id": null,
+    "note": null,
+    "question": null,
+    "removed": false,
+    "key": "p-s2"
+   }
+  ],
+  "timers": [],
+  "view": {
+   "items": [
+    {
+     "name": "Halfvolle melk 1 liter",
+     "picnic_id": "s1",
+     "image_id": null,
+     "unit": "1 liter",
+     "qty": 2,
+     "unit_price": 1.19,
+     "promo": null,
+     "source": "standard",
+     "recipe": null,
+     "recipe_id": null,
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s1"
+    },
+    {
+     "name": "Volkoren brood",
+     "picnic_id": "s2",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 2.39,
+     "promo": null,
+     "source": "standard",
+     "recipe": null,
+     "recipe_id": null,
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s2"
+    },
+    {
+     "name": "Bananen",
+     "picnic_id": "s3",
+     "image_id": null,
+     "unit": "1 kilo",
+     "qty": 1,
+     "unit_price": 1.69,
+     "promo": null,
+     "source": "standard",
+     "recipe": null,
+     "recipe_id": null,
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s3"
+    },
+    {
+     "name": "Griekse yoghurt",
+     "picnic_id": "s4",
+     "image_id": null,
+     "unit": null,
+     "qty": 2,
+     "unit_price": 1.89,
+     "promo": {
+      "label": "2e halve prijs",
+      "saving": 0.95
+     },
+     "source": "promo",
+     "recipe": null,
+     "recipe_id": null,
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s4"
+    },
+    {
+     "name": "Vuilniszakken",
+     "picnic_id": "s5",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 2.49,
+     "promo": null,
+     "source": "advice",
+     "recipe": null,
+     "recipe_id": null,
+     "note": "laatst 6 weken geleden",
+     "question": null,
+     "removed": false,
+     "key": "p-s5"
+    },
+    {
+     "name": "Bakpapier",
+     "picnic_id": null,
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": null,
+     "promo": null,
+     "source": "extra",
+     "recipe": null,
+     "recipe_id": null,
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "n-bakpapier"
+    },
+    {
+     "name": "Zalmfilet 2 stuks",
+     "picnic_id": "s10",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 6.99,
+     "promo": {
+      "label": "−35%",
+      "saving": 3.76
+     },
+     "source": "recipe",
+     "recipe": "🐟 Zalm",
+     "recipe_id": "r1",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s10",
+     "members": [
+      "p-s10@r1"
+     ],
+     "recipes": [
+      "🐟 Zalm"
+     ]
+    },
+    {
+     "name": "Krieltjes 500 g",
+     "picnic_id": "s11",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 1.79,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🐟 Zalm",
+     "recipe_id": "r1",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s11",
+     "members": [
+      "p-s11@r1"
+     ],
+     "recipes": [
+      "🐟 Zalm"
+     ]
+    },
+    {
+     "name": "Broccoli",
+     "picnic_id": "s12",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 1.29,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🐟 Zalm",
+     "recipe_id": "r1",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s12",
+     "members": [
+      "p-s12@r1"
+     ],
+     "recipes": [
+      "🐟 Zalm"
+     ]
+    },
+    {
+     "name": "Pesto genovese",
+     "picnic_id": "s13",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 2.49,
+     "promo": {
+      "label": "1+1 gratis",
+      "saving": 2.49
+     },
+     "source": "recipe",
+     "recipe": "🍝 Pasta pesto",
+     "recipe_id": "r4",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s13",
+     "members": [
+      "p-s13@r4"
+     ],
+     "recipes": [
+      "🍝 Pasta pesto"
+     ]
+    },
+    {
+     "name": "Kipfilet 300 g",
+     "picnic_id": "s14",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 3.99,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🍝 Pasta pesto",
+     "recipe_id": "r4",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s14",
+     "members": [
+      "p-s14@r4"
+     ],
+     "recipes": [
+      "🍝 Pasta pesto"
+     ]
+    },
+    {
+     "name": "Boerenkool gesneden",
+     "picnic_id": "s15",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 1.49,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🥔 Stamppot",
+     "recipe_id": "r6",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s15",
+     "members": [
+      "p-s15@r6"
+     ],
+     "recipes": [
+      "🥔 Stamppot"
+     ]
+    },
+    {
+     "name": "Rookworst",
+     "picnic_id": "s16",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 2.29,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🥔 Stamppot",
+     "recipe_id": "r6",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s16",
+     "members": [
+      "p-s16@r6"
+     ],
+     "recipes": [
+      "🥔 Stamppot"
+     ]
+    }
+   ],
+   "summary": {
+    "days_total": 5,
+    "days_chosen": 3,
+    "days_open": [
+     "do",
+     "vr"
+    ],
+    "recipe_price": 28.9,
+    "items_total": 33.06,
+    "items_count": 13,
+    "unknown_prices": 1,
+    "savings": 7.2,
+    "to_send": 13,
+    "to_remove": [],
+    "unlinked": 1
+   }
+  },
+  "claude_ready": false,
+  "updated_at": "2026-11-25T19:49:30.319374+00:00",
+  "can_edit": true
+ },
+ "cooking": {
+  "plan": {
+   "week": "2026-W48",
+   "delivery": "zo 22 nov 12:00",
+   "order_deadline": "za 21 nov 13:00",
+   "delivery_at": "2026-11-22T12:00:00+00:00",
+   "order_deadline_at": "2026-11-21T13:00:00+00:00",
+   "advice": "Zalm is deze week 35% goedkoper; daarom twee visopties.",
+   "generated_at": "2026-11-25T19:49:30.318802+00:00",
+   "status": "proposed",
+   "recipes": [
+    {
+     "id": "r1",
+     "emoji": "🐟",
+     "title": "Zalm uit de oven met krieltjes en broccoli",
+     "minutes": 30,
+     "price": 14.2,
+     "why": "zalm −35%",
+     "servings": "2 volw. + Kai",
+     "ingredients": [
+      "2 zalmfilets",
+      "500 g krieltjes",
+      "1 broccoli"
+     ],
+     "pantry": [
+      "olijfolie",
+      "peper",
+      "zout"
+     ],
+     "steps": [
+      {
+       "text": "Verwarm de oven voor op 200 °C."
+      },
+      {
+       "text": "Snijd de krieltjes doormidden en meng met olie, peper en zout."
+      },
+      {
+       "text": "Bak de krieltjes 15 minuten in de oven.",
+       "timer_sec": 900
+      },
+      {
+       "text": "Leg de zalm erbij en bak nog 12 minuten.",
+       "timer_sec": 720
+      },
+      {
+       "text": "Kook de broccoli 5 minuten en serveer."
+      }
+     ],
+     "tips": {
+      "michelle": "Zalm door en door gaar.",
+      "kai": "Graatjes checken, kleine stukjes."
+     },
+     "selected": true
+    },
+    {
+     "id": "r2",
+     "emoji": "🍗",
+     "title": "Kip-kerrie met rijst en sperziebonen",
+     "minutes": 25,
+     "price": 9.8,
+     "why": "kipdij 2e halve prijs",
+     "servings": "2 volw. + Kai",
+     "ingredients": [
+      "2 zalmfilets",
+      "500 g krieltjes",
+      "1 broccoli"
+     ],
+     "pantry": [
+      "olijfolie",
+      "peper",
+      "zout"
+     ],
+     "steps": [
+      {
+       "text": "Verwarm de oven voor op 200 °C."
+      },
+      {
+       "text": "Snijd de krieltjes doormidden en meng met olie, peper en zout."
+      },
+      {
+       "text": "Bak de krieltjes 15 minuten in de oven.",
+       "timer_sec": 900
+      },
+      {
+       "text": "Leg de zalm erbij en bak nog 12 minuten.",
+       "timer_sec": 720
+      },
+      {
+       "text": "Kook de broccoli 5 minuten en serveer."
+      }
+     ],
+     "tips": {
+      "michelle": "Zalm door en door gaar.",
+      "kai": "Graatjes checken, kleine stukjes."
+     },
+     "selected": false
+    },
+    {
+     "id": "r3",
+     "emoji": "🥩",
+     "title": "Gehaktballetjes in tomatensaus met puree",
+     "minutes": 30,
+     "price": 8.9,
+     "why": null,
+     "servings": "2 volw. + Kai",
+     "ingredients": [
+      "2 zalmfilets",
+      "500 g krieltjes",
+      "1 broccoli"
+     ],
+     "pantry": [
+      "olijfolie",
+      "peper",
+      "zout"
+     ],
+     "steps": [
+      {
+       "text": "Verwarm de oven voor op 200 °C."
+      },
+      {
+       "text": "Snijd de krieltjes doormidden en meng met olie, peper en zout."
+      },
+      {
+       "text": "Bak de krieltjes 15 minuten in de oven.",
+       "timer_sec": 900
+      },
+      {
+       "text": "Leg de zalm erbij en bak nog 12 minuten.",
+       "timer_sec": 720
+      },
+      {
+       "text": "Kook de broccoli 5 minuten en serveer."
+      }
+     ],
+     "tips": {
+      "michelle": "Zalm door en door gaar.",
+      "kai": "Graatjes checken, kleine stukjes."
+     },
+     "selected": false
+    },
+    {
+     "id": "r4",
+     "emoji": "🍝",
+     "title": "Pasta pesto met kip en cherrytomaatjes",
+     "minutes": 20,
+     "price": 7.6,
+     "why": "pesto 1+1",
+     "servings": "2 volw. + Kai",
+     "ingredients": [
+      "2 zalmfilets",
+      "500 g krieltjes",
+      "1 broccoli"
+     ],
+     "pantry": [
+      "olijfolie",
+      "peper",
+      "zout"
+     ],
+     "steps": [
+      {
+       "text": "Verwarm de oven voor op 200 °C."
+      },
+      {
+       "text": "Snijd de krieltjes doormidden en meng met olie, peper en zout."
+      },
+      {
+       "text": "Bak de krieltjes 15 minuten in de oven.",
+       "timer_sec": 900
+      },
+      {
+       "text": "Leg de zalm erbij en bak nog 12 minuten.",
+       "timer_sec": 720
+      },
+      {
+       "text": "Kook de broccoli 5 minuten en serveer."
+      }
+     ],
+     "tips": {
+      "michelle": "Zalm door en door gaar.",
+      "kai": "Graatjes checken, kleine stukjes."
+     },
+     "selected": true
+    },
+    {
+     "id": "r5",
+     "emoji": "🍝",
+     "title": "Macaroni met ham en kaas",
+     "minutes": 25,
+     "price": 6.4,
+     "why": null,
+     "servings": "2 volw. + Kai",
+     "ingredients": [
+      "2 zalmfilets",
+      "500 g krieltjes",
+      "1 broccoli"
+     ],
+     "pantry": [
+      "olijfolie",
+      "peper",
+      "zout"
+     ],
+     "steps": [
+      {
+       "text": "Verwarm de oven voor op 200 °C."
+      },
+      {
+       "text": "Snijd de krieltjes doormidden en meng met olie, peper en zout."
+      },
+      {
+       "text": "Bak de krieltjes 15 minuten in de oven.",
+       "timer_sec": 900
+      },
+      {
+       "text": "Leg de zalm erbij en bak nog 12 minuten.",
+       "timer_sec": 720
+      },
+      {
+       "text": "Kook de broccoli 5 minuten en serveer."
+      }
+     ],
+     "tips": {
+      "michelle": "Zalm door en door gaar.",
+      "kai": "Graatjes checken, kleine stukjes."
+     },
+     "selected": false
+    },
+    {
+     "id": "r6",
+     "emoji": "🥔",
+     "title": "Boerenkoolstamppot met rookworst",
+     "minutes": 30,
+     "price": 7.1,
+     "why": "boerenkool −25%",
+     "servings": "2 volw. + Kai",
+     "ingredients": [
+      "2 zalmfilets",
+      "500 g krieltjes",
+      "1 broccoli"
+     ],
+     "pantry": [
+      "olijfolie",
+      "peper",
+      "zout"
+     ],
+     "steps": [
+      {
+       "text": "Verwarm de oven voor op 200 °C."
+      },
+      {
+       "text": "Snijd de krieltjes doormidden en meng met olie, peper en zout."
+      },
+      {
+       "text": "Bak de krieltjes 15 minuten in de oven.",
+       "timer_sec": 900
+      },
+      {
+       "text": "Leg de zalm erbij en bak nog 12 minuten.",
+       "timer_sec": 720
+      },
+      {
+       "text": "Kook de broccoli 5 minuten en serveer."
+      }
+     ],
+     "tips": {
+      "michelle": "Zalm door en door gaar.",
+      "kai": "Graatjes checken, kleine stukjes."
+     },
+     "selected": true
+    },
+    {
+     "id": "r7",
+     "emoji": "🍛",
+     "title": "Nasi met satésaus en komkommer",
+     "minutes": 25,
+     "price": 8.3,
+     "why": null,
+     "servings": "2 volw. + Kai",
+     "ingredients": [
+      "2 zalmfilets",
+      "500 g krieltjes",
+      "1 broccoli"
+     ],
+     "pantry": [
+      "olijfolie",
+      "peper",
+      "zout"
+     ],
+     "steps": [
+      {
+       "text": "Verwarm de oven voor op 200 °C."
+      },
+      {
+       "text": "Snijd de krieltjes doormidden en meng met olie, peper en zout."
+      },
+      {
+       "text": "Bak de krieltjes 15 minuten in de oven.",
+       "timer_sec": 900
+      },
+      {
+       "text": "Leg de zalm erbij en bak nog 12 minuten.",
+       "timer_sec": 720
+      },
+      {
+       "text": "Kook de broccoli 5 minuten en serveer."
+      }
+     ],
+     "tips": {
+      "michelle": "Zalm door en door gaar.",
+      "kai": "Graatjes checken, kleine stukjes."
+     },
+     "selected": false
+    },
+    {
+     "id": "r8",
+     "emoji": "🌮",
+     "title": "Wraps met kip, paprika en maïs",
+     "minutes": 20,
+     "price": 9.2,
+     "why": "wraps 2 voor €3",
+     "servings": "2 volw. + Kai",
+     "ingredients": [
+      "2 zalmfilets",
+      "500 g krieltjes",
+      "1 broccoli"
+     ],
+     "pantry": [
+      "olijfolie",
+      "peper",
+      "zout"
+     ],
+     "steps": [
+      {
+       "text": "Verwarm de oven voor op 200 °C."
+      },
+      {
+       "text": "Snijd de krieltjes doormidden en meng met olie, peper en zout."
+      },
+      {
+       "text": "Bak de krieltjes 15 minuten in de oven.",
+       "timer_sec": 900
+      },
+      {
+       "text": "Leg de zalm erbij en bak nog 12 minuten.",
+       "timer_sec": 720
+      },
+      {
+       "text": "Kook de broccoli 5 minuten en serveer."
+      }
+     ],
+     "tips": {
+      "michelle": "Zalm door en door gaar.",
+      "kai": "Graatjes checken, kleine stukjes."
+     },
+     "selected": false
+    },
+    {
+     "id": "r9",
+     "emoji": "🍳",
+     "title": "Shakshuka met brood",
+     "minutes": 25,
+     "price": 6.1,
+     "why": null,
+     "servings": "2 volw. + Kai",
+     "ingredients": [
+      "2 zalmfilets",
+      "500 g krieltjes",
+      "1 broccoli"
+     ],
+     "pantry": [
+      "olijfolie",
+      "peper",
+      "zout"
+     ],
+     "steps": [
+      {
+       "text": "Verwarm de oven voor op 200 °C."
+      },
+      {
+       "text": "Snijd de krieltjes doormidden en meng met olie, peper en zout."
+      },
+      {
+       "text": "Bak de krieltjes 15 minuten in de oven.",
+       "timer_sec": 900
+      },
+      {
+       "text": "Leg de zalm erbij en bak nog 12 minuten.",
+       "timer_sec": 720
+      },
+      {
+       "text": "Kook de broccoli 5 minuten en serveer."
+      }
+     ],
+     "tips": {
+      "michelle": "Zalm door en door gaar.",
+      "kai": "Graatjes checken, kleine stukjes."
+     },
+     "selected": false
+    }
+   ],
+   "days": [
+    {
+     "day": "ma",
+     "date": "2026-11-23",
+     "slot": "AGV",
+     "note": null,
+     "options": [
+      "r1",
+      "r3"
+     ],
+     "choice": "r1"
+    },
+    {
+     "day": "di",
+     "date": "2026-11-24",
+     "slot": "Pasta",
+     "note": "Vaak bij opa en oma",
+     "options": [
+      "r4",
+      "r5"
+     ],
+     "choice": "r4"
+    },
+    {
+     "day": "wo",
+     "date": "2026-11-25",
+     "slot": "Stamppot of rijst",
+     "note": null,
+     "options": [
+      "r6",
+      "r7"
+     ],
+     "choice": "r6"
+    },
+    {
+     "day": "do",
+     "date": "2026-11-26",
+     "slot": "Vrije keus",
+     "note": null,
+     "options": [
+      "r2",
+      "r8"
+     ],
+     "choice": null
+    },
+    {
+     "day": "vr",
+     "date": "2026-11-27",
+     "slot": "Makkelijk",
+     "note": null,
+     "options": [
+      "r9"
+     ],
+     "choice": null
+    }
+   ],
+   "items": [
+    {
+     "name": "Halfvolle melk 1 liter",
+     "picnic_id": "s1",
+     "image_id": null,
+     "unit": "1 liter",
+     "qty": 2,
+     "unit_price": 1.19,
+     "promo": null,
+     "source": "standard",
+     "recipe": null,
+     "recipe_id": null,
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s1"
+    },
+    {
+     "name": "Volkoren brood",
+     "picnic_id": "s2",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 2.39,
+     "promo": null,
+     "source": "standard",
+     "recipe": null,
+     "recipe_id": null,
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s2"
+    },
+    {
+     "name": "Bananen",
+     "picnic_id": "s3",
+     "image_id": null,
+     "unit": "1 kilo",
+     "qty": 1,
+     "unit_price": 1.69,
+     "promo": null,
+     "source": "standard",
+     "recipe": null,
+     "recipe_id": null,
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s3"
+    },
+    {
+     "name": "Griekse yoghurt",
+     "picnic_id": "s4",
+     "image_id": null,
+     "unit": null,
+     "qty": 2,
+     "unit_price": 1.89,
+     "promo": {
+      "label": "2e halve prijs",
+      "saving": 0.95
+     },
+     "source": "promo",
+     "recipe": null,
+     "recipe_id": null,
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s4"
+    },
+    {
+     "name": "Vuilniszakken",
+     "picnic_id": "s5",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 2.49,
+     "promo": null,
+     "source": "advice",
+     "recipe": null,
+     "recipe_id": null,
+     "note": "laatst 6 weken geleden",
+     "question": null,
+     "removed": false,
+     "key": "p-s5"
+    },
+    {
+     "name": "Bakpapier",
+     "picnic_id": null,
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": null,
+     "promo": null,
+     "source": "extra",
+     "recipe": null,
+     "recipe_id": null,
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "n-bakpapier"
+    },
+    {
+     "name": "Zalmfilet 2 stuks",
+     "picnic_id": "s10",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 6.99,
+     "promo": {
+      "label": "−35%",
+      "saving": 3.76
+     },
+     "source": "recipe",
+     "recipe": "🐟 Zalm",
+     "recipe_id": "r1",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s10@r1"
+    },
+    {
+     "name": "Krieltjes 500 g",
+     "picnic_id": "s11",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 1.79,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🐟 Zalm",
+     "recipe_id": "r1",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s11@r1"
+    },
+    {
+     "name": "Broccoli",
+     "picnic_id": "s12",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 1.29,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🐟 Zalm",
+     "recipe_id": "r1",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s12@r1"
+    },
+    {
+     "name": "Pesto genovese",
+     "picnic_id": "s13",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 2.49,
+     "promo": {
+      "label": "1+1 gratis",
+      "saving": 2.49
+     },
+     "source": "recipe",
+     "recipe": "🍝 Pasta pesto",
+     "recipe_id": "r4",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s13@r4"
+    },
+    {
+     "name": "Kipfilet 300 g",
+     "picnic_id": "s14",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 3.99,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🍝 Pasta pesto",
+     "recipe_id": "r4",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s14@r4"
+    },
+    {
+     "name": "Kipfilet 300 g",
+     "picnic_id": "s14",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 3.99,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🌮 Wraps",
+     "recipe_id": "r8",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s14@r8"
+    },
+    {
+     "name": "Boerenkool gesneden",
+     "picnic_id": "s15",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 1.49,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🥔 Stamppot",
+     "recipe_id": "r6",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s15@r6"
+    },
+    {
+     "name": "Rookworst",
+     "picnic_id": "s16",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 2.29,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🥔 Stamppot",
+     "recipe_id": "r6",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s16@r6"
+    },
+    {
+     "name": "Wraps naturel",
+     "picnic_id": "s17",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 1.65,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🌮 Wraps",
+     "recipe_id": "r8",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s17@r8"
+    }
+   ],
+   "michelle": null,
+   "questions": [
+    {
+     "id": "kai_fruit",
+     "who": "kai",
+     "title": "Kai · groente of fruit",
+     "question": "Snack voor tussendoor",
+     "options": [
+      {
+       "id": "o1",
+       "emoji": "🥒",
+       "title": "Snackkomkommers",
+       "items": []
+      },
+      {
+       "id": "o2",
+       "emoji": "🍎",
+       "title": "Appeltjes",
+       "items": []
+      },
+      {
+       "id": "o3",
+       "emoji": "🍊",
+       "title": "Mandarijntjes",
+       "new": true,
+       "items": []
+      }
+     ],
+     "choice": "o2",
+     "custom": null
+    },
+    {
+     "id": "michelle_snack",
+     "who": "michelle",
+     "title": "Michelle · snack",
+     "question": "Snack voor deze week",
+     "options": [
+      {
+       "id": "o1",
+       "emoji": "🍪",
+       "title": "Sultana",
+       "items": []
+      },
+      {
+       "id": "o2",
+       "emoji": "🥜",
+       "title": "Rijstwafels",
+       "items": []
+      }
+     ],
+     "choice": null,
+     "custom": null
+    }
+   ],
+   "approved_at": null,
+   "results": [],
+   "sent": {}
+  },
+  "standard_items": [
+   {
+    "name": "Halfvolle melk 1 liter",
+    "picnic_id": "s1",
+    "image_id": null,
+    "unit": null,
+    "qty": 2,
+    "unit_price": 1.19,
+    "promo": null,
+    "source": "standard",
+    "recipe": null,
+    "recipe_id": null,
+    "note": null,
+    "question": null,
+    "removed": false,
+    "key": "p-s1"
+   },
+   {
+    "name": "Volkoren brood",
+    "picnic_id": "s2",
+    "image_id": null,
+    "unit": null,
+    "qty": 1,
+    "unit_price": 2.39,
+    "promo": null,
+    "source": "standard",
+    "recipe": null,
+    "recipe_id": null,
+    "note": null,
+    "question": null,
+    "removed": false,
+    "key": "p-s2"
+   }
+  ],
+  "timers": [
+   {
+    "id": "655c0c45",
+    "label": "Boerenkool · stap 3",
+    "seconds": 900,
+    "start": "2026-11-25T19:49:30.319973+00:00",
+    "end": "2026-11-25T20:04:30.319973+00:00",
+    "done": false,
+    "by": null,
+    "recipe_id": null
+   }
+  ],
+  "view": {
+   "items": [
+    {
+     "name": "Halfvolle melk 1 liter",
+     "picnic_id": "s1",
+     "image_id": null,
+     "unit": "1 liter",
+     "qty": 2,
+     "unit_price": 1.19,
+     "promo": null,
+     "source": "standard",
+     "recipe": null,
+     "recipe_id": null,
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s1"
+    },
+    {
+     "name": "Volkoren brood",
+     "picnic_id": "s2",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 2.39,
+     "promo": null,
+     "source": "standard",
+     "recipe": null,
+     "recipe_id": null,
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s2"
+    },
+    {
+     "name": "Bananen",
+     "picnic_id": "s3",
+     "image_id": null,
+     "unit": "1 kilo",
+     "qty": 1,
+     "unit_price": 1.69,
+     "promo": null,
+     "source": "standard",
+     "recipe": null,
+     "recipe_id": null,
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s3"
+    },
+    {
+     "name": "Griekse yoghurt",
+     "picnic_id": "s4",
+     "image_id": null,
+     "unit": null,
+     "qty": 2,
+     "unit_price": 1.89,
+     "promo": {
+      "label": "2e halve prijs",
+      "saving": 0.95
+     },
+     "source": "promo",
+     "recipe": null,
+     "recipe_id": null,
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s4"
+    },
+    {
+     "name": "Vuilniszakken",
+     "picnic_id": "s5",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 2.49,
+     "promo": null,
+     "source": "advice",
+     "recipe": null,
+     "recipe_id": null,
+     "note": "laatst 6 weken geleden",
+     "question": null,
+     "removed": false,
+     "key": "p-s5"
+    },
+    {
+     "name": "Bakpapier",
+     "picnic_id": null,
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": null,
+     "promo": null,
+     "source": "extra",
+     "recipe": null,
+     "recipe_id": null,
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "n-bakpapier"
+    },
+    {
+     "name": "Zalmfilet 2 stuks",
+     "picnic_id": "s10",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 6.99,
+     "promo": {
+      "label": "−35%",
+      "saving": 3.76
+     },
+     "source": "recipe",
+     "recipe": "🐟 Zalm",
+     "recipe_id": "r1",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s10",
+     "members": [
+      "p-s10@r1"
+     ],
+     "recipes": [
+      "🐟 Zalm"
+     ]
+    },
+    {
+     "name": "Krieltjes 500 g",
+     "picnic_id": "s11",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 1.79,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🐟 Zalm",
+     "recipe_id": "r1",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s11",
+     "members": [
+      "p-s11@r1"
+     ],
+     "recipes": [
+      "🐟 Zalm"
+     ]
+    },
+    {
+     "name": "Broccoli",
+     "picnic_id": "s12",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 1.29,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🐟 Zalm",
+     "recipe_id": "r1",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s12",
+     "members": [
+      "p-s12@r1"
+     ],
+     "recipes": [
+      "🐟 Zalm"
+     ]
+    },
+    {
+     "name": "Pesto genovese",
+     "picnic_id": "s13",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 2.49,
+     "promo": {
+      "label": "1+1 gratis",
+      "saving": 2.49
+     },
+     "source": "recipe",
+     "recipe": "🍝 Pasta pesto",
+     "recipe_id": "r4",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s13",
+     "members": [
+      "p-s13@r4"
+     ],
+     "recipes": [
+      "🍝 Pasta pesto"
+     ]
+    },
+    {
+     "name": "Kipfilet 300 g",
+     "picnic_id": "s14",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 3.99,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🍝 Pasta pesto",
+     "recipe_id": "r4",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s14",
+     "members": [
+      "p-s14@r4"
+     ],
+     "recipes": [
+      "🍝 Pasta pesto"
+     ]
+    },
+    {
+     "name": "Boerenkool gesneden",
+     "picnic_id": "s15",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 1.49,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🥔 Stamppot",
+     "recipe_id": "r6",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s15",
+     "members": [
+      "p-s15@r6"
+     ],
+     "recipes": [
+      "🥔 Stamppot"
+     ]
+    },
+    {
+     "name": "Rookworst",
+     "picnic_id": "s16",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 2.29,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🥔 Stamppot",
+     "recipe_id": "r6",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s16",
+     "members": [
+      "p-s16@r6"
+     ],
+     "recipes": [
+      "🥔 Stamppot"
+     ]
+    }
+   ],
+   "summary": {
+    "days_total": 5,
+    "days_chosen": 3,
+    "days_open": [
+     "do",
+     "vr"
+    ],
+    "recipe_price": 28.9,
+    "items_total": 33.06,
+    "items_count": 13,
+    "unknown_prices": 1,
+    "savings": 7.2,
+    "to_send": 13,
+    "to_remove": [],
+    "unlinked": 1
+   }
+  },
+  "claude_ready": false,
+  "updated_at": "2026-11-25T19:49:30.320005+00:00",
+  "can_edit": true
+ },
+ "approved": {
+  "plan": {
+   "week": "2026-W48",
+   "delivery": "zo 22 nov 12:00",
+   "order_deadline": "za 21 nov 13:00",
+   "delivery_at": "2026-11-22T12:00:00+00:00",
+   "order_deadline_at": "2026-11-21T13:00:00+00:00",
+   "advice": "Zalm is deze week 35% goedkoper; daarom twee visopties.",
+   "generated_at": "2026-11-25T19:49:30.318802+00:00",
+   "status": "approved",
+   "recipes": [
+    {
+     "id": "r1",
+     "emoji": "🐟",
+     "title": "Zalm uit de oven met krieltjes en broccoli",
+     "minutes": 30,
+     "price": 14.2,
+     "why": "zalm −35%",
+     "servings": "2 volw. + Kai",
+     "ingredients": [
+      "2 zalmfilets",
+      "500 g krieltjes",
+      "1 broccoli"
+     ],
+     "pantry": [
+      "olijfolie",
+      "peper",
+      "zout"
+     ],
+     "steps": [
+      {
+       "text": "Verwarm de oven voor op 200 °C."
+      },
+      {
+       "text": "Snijd de krieltjes doormidden en meng met olie, peper en zout."
+      },
+      {
+       "text": "Bak de krieltjes 15 minuten in de oven.",
+       "timer_sec": 900
+      },
+      {
+       "text": "Leg de zalm erbij en bak nog 12 minuten.",
+       "timer_sec": 720
+      },
+      {
+       "text": "Kook de broccoli 5 minuten en serveer."
+      }
+     ],
+     "tips": {
+      "michelle": "Zalm door en door gaar.",
+      "kai": "Graatjes checken, kleine stukjes."
+     },
+     "selected": true
+    },
+    {
+     "id": "r2",
+     "emoji": "🍗",
+     "title": "Kip-kerrie met rijst en sperziebonen",
+     "minutes": 25,
+     "price": 9.8,
+     "why": "kipdij 2e halve prijs",
+     "servings": "2 volw. + Kai",
+     "ingredients": [
+      "2 zalmfilets",
+      "500 g krieltjes",
+      "1 broccoli"
+     ],
+     "pantry": [
+      "olijfolie",
+      "peper",
+      "zout"
+     ],
+     "steps": [
+      {
+       "text": "Verwarm de oven voor op 200 °C."
+      },
+      {
+       "text": "Snijd de krieltjes doormidden en meng met olie, peper en zout."
+      },
+      {
+       "text": "Bak de krieltjes 15 minuten in de oven.",
+       "timer_sec": 900
+      },
+      {
+       "text": "Leg de zalm erbij en bak nog 12 minuten.",
+       "timer_sec": 720
+      },
+      {
+       "text": "Kook de broccoli 5 minuten en serveer."
+      }
+     ],
+     "tips": {
+      "michelle": "Zalm door en door gaar.",
+      "kai": "Graatjes checken, kleine stukjes."
+     },
+     "selected": false
+    },
+    {
+     "id": "r3",
+     "emoji": "🥩",
+     "title": "Gehaktballetjes in tomatensaus met puree",
+     "minutes": 30,
+     "price": 8.9,
+     "why": null,
+     "servings": "2 volw. + Kai",
+     "ingredients": [
+      "2 zalmfilets",
+      "500 g krieltjes",
+      "1 broccoli"
+     ],
+     "pantry": [
+      "olijfolie",
+      "peper",
+      "zout"
+     ],
+     "steps": [
+      {
+       "text": "Verwarm de oven voor op 200 °C."
+      },
+      {
+       "text": "Snijd de krieltjes doormidden en meng met olie, peper en zout."
+      },
+      {
+       "text": "Bak de krieltjes 15 minuten in de oven.",
+       "timer_sec": 900
+      },
+      {
+       "text": "Leg de zalm erbij en bak nog 12 minuten.",
+       "timer_sec": 720
+      },
+      {
+       "text": "Kook de broccoli 5 minuten en serveer."
+      }
+     ],
+     "tips": {
+      "michelle": "Zalm door en door gaar.",
+      "kai": "Graatjes checken, kleine stukjes."
+     },
+     "selected": false
+    },
+    {
+     "id": "r4",
+     "emoji": "🍝",
+     "title": "Pasta pesto met kip en cherrytomaatjes",
+     "minutes": 20,
+     "price": 7.6,
+     "why": "pesto 1+1",
+     "servings": "2 volw. + Kai",
+     "ingredients": [
+      "2 zalmfilets",
+      "500 g krieltjes",
+      "1 broccoli"
+     ],
+     "pantry": [
+      "olijfolie",
+      "peper",
+      "zout"
+     ],
+     "steps": [
+      {
+       "text": "Verwarm de oven voor op 200 °C."
+      },
+      {
+       "text": "Snijd de krieltjes doormidden en meng met olie, peper en zout."
+      },
+      {
+       "text": "Bak de krieltjes 15 minuten in de oven.",
+       "timer_sec": 900
+      },
+      {
+       "text": "Leg de zalm erbij en bak nog 12 minuten.",
+       "timer_sec": 720
+      },
+      {
+       "text": "Kook de broccoli 5 minuten en serveer."
+      }
+     ],
+     "tips": {
+      "michelle": "Zalm door en door gaar.",
+      "kai": "Graatjes checken, kleine stukjes."
+     },
+     "selected": true
+    },
+    {
+     "id": "r5",
+     "emoji": "🍝",
+     "title": "Macaroni met ham en kaas",
+     "minutes": 25,
+     "price": 6.4,
+     "why": null,
+     "servings": "2 volw. + Kai",
+     "ingredients": [
+      "2 zalmfilets",
+      "500 g krieltjes",
+      "1 broccoli"
+     ],
+     "pantry": [
+      "olijfolie",
+      "peper",
+      "zout"
+     ],
+     "steps": [
+      {
+       "text": "Verwarm de oven voor op 200 °C."
+      },
+      {
+       "text": "Snijd de krieltjes doormidden en meng met olie, peper en zout."
+      },
+      {
+       "text": "Bak de krieltjes 15 minuten in de oven.",
+       "timer_sec": 900
+      },
+      {
+       "text": "Leg de zalm erbij en bak nog 12 minuten.",
+       "timer_sec": 720
+      },
+      {
+       "text": "Kook de broccoli 5 minuten en serveer."
+      }
+     ],
+     "tips": {
+      "michelle": "Zalm door en door gaar.",
+      "kai": "Graatjes checken, kleine stukjes."
+     },
+     "selected": false
+    },
+    {
+     "id": "r6",
+     "emoji": "🥔",
+     "title": "Boerenkoolstamppot met rookworst",
+     "minutes": 30,
+     "price": 7.1,
+     "why": "boerenkool −25%",
+     "servings": "2 volw. + Kai",
+     "ingredients": [
+      "2 zalmfilets",
+      "500 g krieltjes",
+      "1 broccoli"
+     ],
+     "pantry": [
+      "olijfolie",
+      "peper",
+      "zout"
+     ],
+     "steps": [
+      {
+       "text": "Verwarm de oven voor op 200 °C."
+      },
+      {
+       "text": "Snijd de krieltjes doormidden en meng met olie, peper en zout."
+      },
+      {
+       "text": "Bak de krieltjes 15 minuten in de oven.",
+       "timer_sec": 900
+      },
+      {
+       "text": "Leg de zalm erbij en bak nog 12 minuten.",
+       "timer_sec": 720
+      },
+      {
+       "text": "Kook de broccoli 5 minuten en serveer."
+      }
+     ],
+     "tips": {
+      "michelle": "Zalm door en door gaar.",
+      "kai": "Graatjes checken, kleine stukjes."
+     },
+     "selected": true
+    },
+    {
+     "id": "r7",
+     "emoji": "🍛",
+     "title": "Nasi met satésaus en komkommer",
+     "minutes": 25,
+     "price": 8.3,
+     "why": null,
+     "servings": "2 volw. + Kai",
+     "ingredients": [
+      "2 zalmfilets",
+      "500 g krieltjes",
+      "1 broccoli"
+     ],
+     "pantry": [
+      "olijfolie",
+      "peper",
+      "zout"
+     ],
+     "steps": [
+      {
+       "text": "Verwarm de oven voor op 200 °C."
+      },
+      {
+       "text": "Snijd de krieltjes doormidden en meng met olie, peper en zout."
+      },
+      {
+       "text": "Bak de krieltjes 15 minuten in de oven.",
+       "timer_sec": 900
+      },
+      {
+       "text": "Leg de zalm erbij en bak nog 12 minuten.",
+       "timer_sec": 720
+      },
+      {
+       "text": "Kook de broccoli 5 minuten en serveer."
+      }
+     ],
+     "tips": {
+      "michelle": "Zalm door en door gaar.",
+      "kai": "Graatjes checken, kleine stukjes."
+     },
+     "selected": false
+    },
+    {
+     "id": "r8",
+     "emoji": "🌮",
+     "title": "Wraps met kip, paprika en maïs",
+     "minutes": 20,
+     "price": 9.2,
+     "why": "wraps 2 voor €3",
+     "servings": "2 volw. + Kai",
+     "ingredients": [
+      "2 zalmfilets",
+      "500 g krieltjes",
+      "1 broccoli"
+     ],
+     "pantry": [
+      "olijfolie",
+      "peper",
+      "zout"
+     ],
+     "steps": [
+      {
+       "text": "Verwarm de oven voor op 200 °C."
+      },
+      {
+       "text": "Snijd de krieltjes doormidden en meng met olie, peper en zout."
+      },
+      {
+       "text": "Bak de krieltjes 15 minuten in de oven.",
+       "timer_sec": 900
+      },
+      {
+       "text": "Leg de zalm erbij en bak nog 12 minuten.",
+       "timer_sec": 720
+      },
+      {
+       "text": "Kook de broccoli 5 minuten en serveer."
+      }
+     ],
+     "tips": {
+      "michelle": "Zalm door en door gaar.",
+      "kai": "Graatjes checken, kleine stukjes."
+     },
+     "selected": false
+    },
+    {
+     "id": "r9",
+     "emoji": "🍳",
+     "title": "Shakshuka met brood",
+     "minutes": 25,
+     "price": 6.1,
+     "why": null,
+     "servings": "2 volw. + Kai",
+     "ingredients": [
+      "2 zalmfilets",
+      "500 g krieltjes",
+      "1 broccoli"
+     ],
+     "pantry": [
+      "olijfolie",
+      "peper",
+      "zout"
+     ],
+     "steps": [
+      {
+       "text": "Verwarm de oven voor op 200 °C."
+      },
+      {
+       "text": "Snijd de krieltjes doormidden en meng met olie, peper en zout."
+      },
+      {
+       "text": "Bak de krieltjes 15 minuten in de oven.",
+       "timer_sec": 900
+      },
+      {
+       "text": "Leg de zalm erbij en bak nog 12 minuten.",
+       "timer_sec": 720
+      },
+      {
+       "text": "Kook de broccoli 5 minuten en serveer."
+      }
+     ],
+     "tips": {
+      "michelle": "Zalm door en door gaar.",
+      "kai": "Graatjes checken, kleine stukjes."
+     },
+     "selected": false
+    }
+   ],
+   "days": [
+    {
+     "day": "ma",
+     "date": "2026-11-23",
+     "slot": "AGV",
+     "note": null,
+     "options": [
+      "r1",
+      "r3"
+     ],
+     "choice": "r1"
+    },
+    {
+     "day": "di",
+     "date": "2026-11-24",
+     "slot": "Pasta",
+     "note": "Vaak bij opa en oma",
+     "options": [
+      "r4",
+      "r5"
+     ],
+     "choice": "r4"
+    },
+    {
+     "day": "wo",
+     "date": "2026-11-25",
+     "slot": "Stamppot of rijst",
+     "note": null,
+     "options": [
+      "r6",
+      "r7"
+     ],
+     "choice": "r6"
+    },
+    {
+     "day": "do",
+     "date": "2026-11-26",
+     "slot": "Vrije keus",
+     "note": null,
+     "options": [
+      "r2",
+      "r8"
+     ],
+     "choice": null
+    },
+    {
+     "day": "vr",
+     "date": "2026-11-27",
+     "slot": "Makkelijk",
+     "note": null,
+     "options": [
+      "r9"
+     ],
+     "choice": null
+    }
+   ],
+   "items": [
+    {
+     "name": "Halfvolle melk 1 liter",
+     "picnic_id": "s1",
+     "image_id": null,
+     "unit": "1 liter",
+     "qty": 2,
+     "unit_price": 1.19,
+     "promo": null,
+     "source": "standard",
+     "recipe": null,
+     "recipe_id": null,
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s1"
+    },
+    {
+     "name": "Volkoren brood",
+     "picnic_id": "s2",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 2.39,
+     "promo": null,
+     "source": "standard",
+     "recipe": null,
+     "recipe_id": null,
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s2"
+    },
+    {
+     "name": "Bananen",
+     "picnic_id": "s3",
+     "image_id": null,
+     "unit": "1 kilo",
+     "qty": 1,
+     "unit_price": 1.69,
+     "promo": null,
+     "source": "standard",
+     "recipe": null,
+     "recipe_id": null,
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s3"
+    },
+    {
+     "name": "Griekse yoghurt",
+     "picnic_id": "s4",
+     "image_id": null,
+     "unit": null,
+     "qty": 2,
+     "unit_price": 1.89,
+     "promo": {
+      "label": "2e halve prijs",
+      "saving": 0.95
+     },
+     "source": "promo",
+     "recipe": null,
+     "recipe_id": null,
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s4"
+    },
+    {
+     "name": "Vuilniszakken",
+     "picnic_id": "s5",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 2.49,
+     "promo": null,
+     "source": "advice",
+     "recipe": null,
+     "recipe_id": null,
+     "note": "laatst 6 weken geleden",
+     "question": null,
+     "removed": false,
+     "key": "p-s5"
+    },
+    {
+     "name": "Bakpapier",
+     "picnic_id": null,
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": null,
+     "promo": null,
+     "source": "extra",
+     "recipe": null,
+     "recipe_id": null,
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "n-bakpapier"
+    },
+    {
+     "name": "Zalmfilet 2 stuks",
+     "picnic_id": "s10",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 6.99,
+     "promo": {
+      "label": "−35%",
+      "saving": 3.76
+     },
+     "source": "recipe",
+     "recipe": "🐟 Zalm",
+     "recipe_id": "r1",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s10@r1"
+    },
+    {
+     "name": "Krieltjes 500 g",
+     "picnic_id": "s11",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 1.79,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🐟 Zalm",
+     "recipe_id": "r1",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s11@r1"
+    },
+    {
+     "name": "Broccoli",
+     "picnic_id": "s12",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 1.29,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🐟 Zalm",
+     "recipe_id": "r1",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s12@r1"
+    },
+    {
+     "name": "Pesto genovese",
+     "picnic_id": "s13",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 2.49,
+     "promo": {
+      "label": "1+1 gratis",
+      "saving": 2.49
+     },
+     "source": "recipe",
+     "recipe": "🍝 Pasta pesto",
+     "recipe_id": "r4",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s13@r4"
+    },
+    {
+     "name": "Kipfilet 300 g",
+     "picnic_id": "s14",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 3.99,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🍝 Pasta pesto",
+     "recipe_id": "r4",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s14@r4"
+    },
+    {
+     "name": "Kipfilet 300 g",
+     "picnic_id": "s14",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 3.99,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🌮 Wraps",
+     "recipe_id": "r8",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s14@r8"
+    },
+    {
+     "name": "Boerenkool gesneden",
+     "picnic_id": "s15",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 1.49,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🥔 Stamppot",
+     "recipe_id": "r6",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s15@r6"
+    },
+    {
+     "name": "Rookworst",
+     "picnic_id": "s16",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 2.29,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🥔 Stamppot",
+     "recipe_id": "r6",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s16@r6"
+    },
+    {
+     "name": "Wraps naturel",
+     "picnic_id": "s17",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 1.65,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🌮 Wraps",
+     "recipe_id": "r8",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s17@r8"
+    }
+   ],
+   "michelle": null,
+   "questions": [
+    {
+     "id": "kai_fruit",
+     "who": "kai",
+     "title": "Kai · groente of fruit",
+     "question": "Snack voor tussendoor",
+     "options": [
+      {
+       "id": "o1",
+       "emoji": "🥒",
+       "title": "Snackkomkommers",
+       "items": []
+      },
+      {
+       "id": "o2",
+       "emoji": "🍎",
+       "title": "Appeltjes",
+       "items": []
+      },
+      {
+       "id": "o3",
+       "emoji": "🍊",
+       "title": "Mandarijntjes",
+       "new": true,
+       "items": []
+      }
+     ],
+     "choice": "o2",
+     "custom": null
+    },
+    {
+     "id": "michelle_snack",
+     "who": "michelle",
+     "title": "Michelle · snack",
+     "question": "Snack voor deze week",
+     "options": [
+      {
+       "id": "o1",
+       "emoji": "🍪",
+       "title": "Sultana",
+       "items": []
+      },
+      {
+       "id": "o2",
+       "emoji": "🥜",
+       "title": "Rijstwafels",
+       "items": []
+      }
+     ],
+     "choice": null,
+     "custom": null
+    }
+   ],
+   "approved_at": "2026-11-25T19:49:30.321087+00:00",
+   "results": [
+    {
+     "key": "p-s1",
+     "name": "Halfvolle melk 1 liter",
+     "ok": true,
+     "qty": 2
+    },
+    {
+     "key": "p-s2",
+     "name": "Volkoren brood",
+     "ok": true,
+     "qty": 1
+    },
+    {
+     "key": "p-s3",
+     "name": "Bananen",
+     "ok": false,
+     "qty": 1,
+     "error": "Niet leverbaar"
+    },
+    {
+     "key": "p-s4",
+     "name": "Griekse yoghurt",
+     "ok": true,
+     "qty": 2
+    },
+    {
+     "key": "p-s5",
+     "name": "Vuilniszakken",
+     "ok": true,
+     "qty": 1
+    },
+    {
+     "key": "n-bakpapier",
+     "name": "Bakpapier",
+     "ok": true,
+     "qty": 1
+    },
+    {
+     "key": "p-s10",
+     "name": "Zalmfilet 2 stuks",
+     "ok": true,
+     "qty": 1
+    },
+    {
+     "key": "p-s11",
+     "name": "Krieltjes 500 g",
+     "ok": true,
+     "qty": 1
+    },
+    {
+     "key": "p-s12",
+     "name": "Broccoli",
+     "ok": true,
+     "qty": 1
+    },
+    {
+     "key": "p-s13",
+     "name": "Pesto genovese",
+     "ok": true,
+     "qty": 1
+    },
+    {
+     "key": "p-s14",
+     "name": "Kipfilet 300 g",
+     "ok": true,
+     "qty": 1
+    },
+    {
+     "key": "p-s15",
+     "name": "Boerenkool gesneden",
+     "ok": true,
+     "qty": 1
+    },
+    {
+     "key": "p-s16",
+     "name": "Rookworst",
+     "ok": true,
+     "qty": 1
+    }
+   ],
+   "sent": {
+    "p:s1": {
+     "qty": 2,
+     "name": "Halfvolle melk 1 liter"
+    },
+    "p:s2": {
+     "qty": 1,
+     "name": "Volkoren brood"
+    },
+    "p:s3": {
+     "qty": 1,
+     "name": "Bananen"
+    },
+    "p:s4": {
+     "qty": 2,
+     "name": "Griekse yoghurt"
+    },
+    "p:s5": {
+     "qty": 1,
+     "name": "Vuilniszakken"
+    },
+    "n:bakpapier": {
+     "qty": 1,
+     "name": "Bakpapier"
+    },
+    "p:s10": {
+     "qty": 1,
+     "name": "Zalmfilet 2 stuks"
+    },
+    "p:s11": {
+     "qty": 1,
+     "name": "Krieltjes 500 g"
+    },
+    "p:s12": {
+     "qty": 1,
+     "name": "Broccoli"
+    },
+    "p:s13": {
+     "qty": 1,
+     "name": "Pesto genovese"
+    },
+    "p:s14": {
+     "qty": 1,
+     "name": "Kipfilet 300 g"
+    },
+    "p:s15": {
+     "qty": 1,
+     "name": "Boerenkool gesneden"
+    },
+    "p:s16": {
+     "qty": 1,
+     "name": "Rookworst"
+    }
+   },
+   "to_remove": []
+  },
+  "standard_items": [
+   {
+    "name": "Halfvolle melk 1 liter",
+    "picnic_id": "s1",
+    "image_id": null,
+    "unit": null,
+    "qty": 2,
+    "unit_price": 1.19,
+    "promo": null,
+    "source": "standard",
+    "recipe": null,
+    "recipe_id": null,
+    "note": null,
+    "question": null,
+    "removed": false,
+    "key": "p-s1"
+   },
+   {
+    "name": "Volkoren brood",
+    "picnic_id": "s2",
+    "image_id": null,
+    "unit": null,
+    "qty": 1,
+    "unit_price": 2.39,
+    "promo": null,
+    "source": "standard",
+    "recipe": null,
+    "recipe_id": null,
+    "note": null,
+    "question": null,
+    "removed": false,
+    "key": "p-s2"
+   }
+  ],
+  "timers": [],
+  "view": {
+   "items": [
+    {
+     "name": "Halfvolle melk 1 liter",
+     "picnic_id": "s1",
+     "image_id": null,
+     "unit": "1 liter",
+     "qty": 2,
+     "unit_price": 1.19,
+     "promo": null,
+     "source": "standard",
+     "recipe": null,
+     "recipe_id": null,
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s1"
+    },
+    {
+     "name": "Volkoren brood",
+     "picnic_id": "s2",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 2.39,
+     "promo": null,
+     "source": "standard",
+     "recipe": null,
+     "recipe_id": null,
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s2"
+    },
+    {
+     "name": "Bananen",
+     "picnic_id": "s3",
+     "image_id": null,
+     "unit": "1 kilo",
+     "qty": 1,
+     "unit_price": 1.69,
+     "promo": null,
+     "source": "standard",
+     "recipe": null,
+     "recipe_id": null,
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s3"
+    },
+    {
+     "name": "Griekse yoghurt",
+     "picnic_id": "s4",
+     "image_id": null,
+     "unit": null,
+     "qty": 2,
+     "unit_price": 1.89,
+     "promo": {
+      "label": "2e halve prijs",
+      "saving": 0.95
+     },
+     "source": "promo",
+     "recipe": null,
+     "recipe_id": null,
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s4"
+    },
+    {
+     "name": "Vuilniszakken",
+     "picnic_id": "s5",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 2.49,
+     "promo": null,
+     "source": "advice",
+     "recipe": null,
+     "recipe_id": null,
+     "note": "laatst 6 weken geleden",
+     "question": null,
+     "removed": false,
+     "key": "p-s5"
+    },
+    {
+     "name": "Bakpapier",
+     "picnic_id": null,
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": null,
+     "promo": null,
+     "source": "extra",
+     "recipe": null,
+     "recipe_id": null,
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "n-bakpapier"
+    },
+    {
+     "name": "Zalmfilet 2 stuks",
+     "picnic_id": "s10",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 6.99,
+     "promo": {
+      "label": "−35%",
+      "saving": 3.76
+     },
+     "source": "recipe",
+     "recipe": "🐟 Zalm",
+     "recipe_id": "r1",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s10",
+     "members": [
+      "p-s10@r1"
+     ],
+     "recipes": [
+      "🐟 Zalm"
+     ]
+    },
+    {
+     "name": "Krieltjes 500 g",
+     "picnic_id": "s11",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 1.79,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🐟 Zalm",
+     "recipe_id": "r1",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s11",
+     "members": [
+      "p-s11@r1"
+     ],
+     "recipes": [
+      "🐟 Zalm"
+     ]
+    },
+    {
+     "name": "Broccoli",
+     "picnic_id": "s12",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 1.29,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🐟 Zalm",
+     "recipe_id": "r1",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s12",
+     "members": [
+      "p-s12@r1"
+     ],
+     "recipes": [
+      "🐟 Zalm"
+     ]
+    },
+    {
+     "name": "Pesto genovese",
+     "picnic_id": "s13",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 2.49,
+     "promo": {
+      "label": "1+1 gratis",
+      "saving": 2.49
+     },
+     "source": "recipe",
+     "recipe": "🍝 Pasta pesto",
+     "recipe_id": "r4",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s13",
+     "members": [
+      "p-s13@r4"
+     ],
+     "recipes": [
+      "🍝 Pasta pesto"
+     ]
+    },
+    {
+     "name": "Kipfilet 300 g",
+     "picnic_id": "s14",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 3.99,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🍝 Pasta pesto",
+     "recipe_id": "r4",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s14",
+     "members": [
+      "p-s14@r4"
+     ],
+     "recipes": [
+      "🍝 Pasta pesto"
+     ]
+    },
+    {
+     "name": "Boerenkool gesneden",
+     "picnic_id": "s15",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 1.49,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🥔 Stamppot",
+     "recipe_id": "r6",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s15",
+     "members": [
+      "p-s15@r6"
+     ],
+     "recipes": [
+      "🥔 Stamppot"
+     ]
+    },
+    {
+     "name": "Rookworst",
+     "picnic_id": "s16",
+     "image_id": null,
+     "unit": null,
+     "qty": 1,
+     "unit_price": 2.29,
+     "promo": null,
+     "source": "recipe",
+     "recipe": "🥔 Stamppot",
+     "recipe_id": "r6",
+     "note": null,
+     "question": null,
+     "removed": false,
+     "key": "p-s16",
+     "members": [
+      "p-s16@r6"
+     ],
+     "recipes": [
+      "🥔 Stamppot"
+     ]
+    }
+   ],
+   "summary": {
+    "days_total": 5,
+    "days_chosen": 3,
+    "days_open": [
+     "do",
+     "vr"
+    ],
+    "recipe_price": 28.9,
+    "items_total": 33.06,
+    "items_count": 13,
+    "unknown_prices": 1,
+    "savings": 7.2,
+    "to_send": 0,
+    "to_remove": [],
+    "unlinked": 1
+   }
+  },
+  "claude_ready": false,
+  "updated_at": "2026-11-25T19:49:30.321089+00:00",
+  "can_edit": true
+ },
+ "empty": {
+  "plan": null,
+  "standard_items": [],
+  "timers": [],
+  "view": null,
+  "claude_ready": false,
+  "updated_at": null,
+  "can_edit": true
+ }
+}
