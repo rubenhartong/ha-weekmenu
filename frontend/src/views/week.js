@@ -124,7 +124,7 @@ function dayRow(p, d) {
   return html`<div class=${cls}>
     <button class="dhead" aria-expanded=${open} @click=${toggle}>
       <div class="dtile" aria-hidden="true"><small>${d.day}</small><b>${dayNum(d.date)}</b></div>
-      <div class="dmid"><span class="vh">${cap(dayName(d.day))}</span>${d.slot ? html`<div class="dslot">${d.slot}</div>` : nothing}${main}${d.note ? html`<div class="dnote">${d.note}</div>` : nothing}</div>
+      <div class="dmid"><span class="vh">${cap(dayName(d.day))}</span>${d.slot ? html`<div class="dslot">${String(d.slot).replace(/_/g, " ")}</div>` : nothing}${main}${d.note ? html`<div class="dnote">${d.note}</div>` : nothing}</div>
       <div class="dright">${r?.price != null ? eur(r.price) : nothing}<span class="chev">${icon(I.chevron)}</span></div>
     </button>
     ${open ? dayBody(p, d) : nothing}

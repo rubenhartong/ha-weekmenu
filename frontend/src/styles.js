@@ -25,11 +25,11 @@ svg.i.lg { width: 24px; height: 24px; }
 .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* ---------- shell ---------- */
-.app { display: flex; flex-direction: column; height: 100%; }
+/* HA gives a custom panel no fixed height: take the viewport, so the tab bar and action bar stay in view */
+.app { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
 header {
   display: flex; align-items: center; gap: var(--wm-s2); height: 56px; flex: none;
-  padding: 0 var(--wm-s3); padding-top: env(safe-area-inset-top);
-  box-sizing: content-box;
+  padding: 0 var(--wm-s3); /* HA already keeps the status bar (safe area) free */
   background: var(--app-header-background-color, var(--wm-surface)); color: var(--app-header-text-color, var(--wm-text));
   border-bottom: 1px solid var(--wm-line);
 }

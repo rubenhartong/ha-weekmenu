@@ -70,8 +70,10 @@ class WeekmenuPanel extends LitElement {
   willUpdate(changed) {
     if (changed.has("hass") && this.hass) {
       if (!this._unsub) this._subscribe();
-      const dark = !!this.hass.themes?.darkMode;
-      if (dark !== this.hasAttribute("dark")) this.toggleAttribute("dark", dark);
+      if (this.hass.themes !== this._themes) {
+        this._themes = this.hass.themes;
+        this._applyTheme();
+      }
     }
   }
 
@@ -96,6 +98,27 @@ class WeekmenuPanel extends LitElement {
     }
     if (this.ui.sheet && !prev.sheet) this.renderRoot.querySelector(".sheet")?.focus?.();
   }
+
+  /** Dark tokens when HA is in dark mode OR the active theme simply has a dark background. */
+  _applyTheme() {
+    let dark = !!this.hass?.themes?.darkMode;
+    if (!dark) {
+      const bg = getComputedStyle(this).getPropertyValue("--primary-background-color").trim()
+        || getComputedStyle(this.parentElement || document.body).backgroundColor;
+      const probe = document.createElement("span");
+      probe.style.color = bg;
+      document.body.appendChild(probe);
+      const m = getComputedStyle(probe).color.match(/\d+(\.\d+)?/g);
+      probe.remove();
+      if (m) {
+        const [r, g, b] = m.map(Number);
+        dark = 0.2126 * r + 0.7152 * g + 0.0722 * b < 110;
+      }
+    }
+    if (dark !== this.hasAttribute("dark")) this.toggleAttribute("dark", dark);
+  }
+
+  firstUpdated() { this._applyTheme(); }
 
   _subscribe() {
     if (this._unsub || !this.hass) return;

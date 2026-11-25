@@ -23,12 +23,12 @@ const server = createServer(async (req, res) => {
 
 const browser = await chromium.launch();
 const errors = [];
-async function shot(name, { width, height, narrow, dark, state = "proposed", user, act, scale = 1 }) {
+async function shot(name, { width, height, narrow, dark, theme = "", state = "proposed", user, act, scale = 1 }) {
   const page = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: scale });
   page.on("pageerror", (e) => errors.push(`${name}: ${e.message}`));
   page.on("console", (m) => m.type() === "error" && !/Failed to load resource/.test(m.text()) && errors.push(`${name}: ${m.text()}`));
   await page.route(/picnicinternational/, (r) => r.abort());
-  await page.goto(`http://localhost:8765/frontend/test/harness.html?state=${state}&narrow=${narrow ? 1 : 0}&dark=${dark ? 1 : 0}&user=${user || "Ruben"}`);
+  await page.goto(`http://localhost:8765/frontend/test/harness.html?state=${state}&narrow=${narrow ? 1 : 0}&dark=${dark ? 1 : 0}&user=${user || "Ruben"}&theme=${theme}`);
   await page.waitForFunction(() => window.__panel?.shadowRoot?.querySelector(".wrap > *"));
   if (act) await act(page);
   await page.waitForTimeout(350);
@@ -54,6 +54,23 @@ await shot("light-phone-link", { ...phone, act: async (p) => { await tab(2)(p); 
 await shot("light-phone-price", { ...phone, act: async (p) => { await tab(2)(p); await sr(".tools .btn")(p); await p.waitForTimeout(100); await sr(".prow")(p); } });
 await shot("light-phone-michelle", { ...phone, user: "Michelle" });
 await shot("light-phone-empty", { ...phone, state: "empty" });
+await shot("theme-dark-phone-week", { ...phone, theme: "dark" });
+
+// the tab bar and the action bar must be inside the viewport (HA gives the panel no fixed height)
+{
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await page.goto("http://localhost:8765/frontend/test/harness.html?narrow=1&theme=dark");
+  await page.waitForFunction(() => window.__panel?.shadowRoot?.querySelector(".wrap > *"));
+  const r = await page.evaluate(() => {
+    const sr = window.__panel.shadowRoot;
+    const box = (s) => sr.querySelector(s)?.getBoundingClientRect();
+    return { tab: box(".tabbar")?.bottom, bar: box(".actionbar")?.bottom, dark: window.__panel.hasAttribute("dark"), docH: document.documentElement.scrollHeight };
+  });
+  if (!(r.tab <= 844 && r.bar <= 844)) errors.push(`tab/action bar outside viewport: ${JSON.stringify(r)}`);
+  if (!r.dark) errors.push("custom dark theme not detected");
+  if (r.docH > 850) errors.push(`page itself scrolls (${r.docH}px)`);
+  await page.close();
+}
 
 await browser.close();
 server.close();

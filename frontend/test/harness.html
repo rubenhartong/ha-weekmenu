@@ -8,7 +8,11 @@
   const fixtures = await (await fetch("./fixtures.json")).json();
   const snap = structuredClone(fixtures[q.get("state") || "proposed"]);
   const dark = q.get("dark") === "1";
-  if (dark) document.body.style.background = "#111111";
+  const themeDark = q.get("theme") === "dark"; // custom dark theme, darkMode flag off (like a user theme)
+  if (dark || themeDark) document.body.style.background = "#111111";
+  if (themeDark) for (const [k, v] of Object.entries({ "--primary-background-color": "#111111", "--card-background-color": "#1c1c1c", "--primary-text-color": "#e1e1e1" })) document.documentElement.style.setProperty(k, v);
+  // like Home Assistant: the panel's parent has no fixed height
+  document.documentElement.style.height = "auto"; document.body.style.height = "auto";
   let push = null;
   const results = [
     { name: "Picnic bakpapier 8 meter", picnic_id: "s90", unit: "8 meter", unit_price: 1.99, bron: "picnic" },
