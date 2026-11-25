@@ -452,4 +452,5 @@ class WeekmenuPanel extends LitElement {
   }
 }
 
-customElements.define("weekmenu-panel", WeekmenuPanel);
+// After an update an open app can load the new module next to the old one; defining twice throws.
+if (!customElements.get("weekmenu-panel")) customElements.define("weekmenu-panel", WeekmenuPanel);
